@@ -21,7 +21,11 @@ class PolicyStorage {
   // 保存策略
   async savePolicy(policy: Policy): Promise<void> {
     const policyPath = path.join(this.storagePath, `${policy.id}.json`);
-    await fsPromises.writeFile(policyPath, JSON.stringify(policy, null, 2), 'utf8');
+    await fsPromises.writeFile(
+      policyPath,
+      JSON.stringify(policy, null, 2),
+      'utf8'
+    );
   }
 
   // 加载策略

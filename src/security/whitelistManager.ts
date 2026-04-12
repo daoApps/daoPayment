@@ -40,7 +40,10 @@ export class WhitelistManager {
   private whitelists: Map<string, Whitelist> = new Map();
   private storagePath: string;
 
-  constructor(contractAddress: `0x${string}`, storagePath: string = './whitelists') {
+  constructor(
+    contractAddress: `0x${string}`,
+    storagePath: string = './whitelists'
+  ) {
     this.contractAddress = contractAddress;
     this.storagePath = storagePath;
     if (!fs.existsSync(this.storagePath)) {
@@ -211,7 +214,9 @@ export class WhitelistManager {
       return false;
     }
 
-    whitelist.items = whitelist.items.filter(item => !items.includes(item.value));
+    whitelist.items = whitelist.items.filter(
+      (item) => !items.includes(item.value)
+    );
     whitelist.updatedAt = Date.now();
     whitelist.version += 1;
 
@@ -227,7 +232,7 @@ export class WhitelistManager {
       return false;
     }
 
-    const item = whitelist.items.find(item => item.value === value);
+    const item = whitelist.items.find((item) => item.value === value);
     if (!item) {
       return false;
     }
@@ -241,9 +246,12 @@ export class WhitelistManager {
   }
 
   // 批量检查
-  batchCheck(whitelistId: string, values: string[]): { [key: string]: boolean } {
+  batchCheck(
+    whitelistId: string,
+    values: string[]
+  ): { [key: string]: boolean } {
     const result: { [key: string]: boolean } = {};
-    values.forEach(value => {
+    values.forEach((value) => {
       result[value] = this.isAllowed(whitelistId, value);
     });
     return result;
@@ -256,18 +264,23 @@ export class WhitelistManager {
 
   // 列出所有白名单
   listWhitelists(): Whitelist[] {
-    return Array.from(this.whitelists.values()).sort((a, b) => b.priority - a.priority);
+    return Array.from(this.whitelists.values()).sort(
+      (a, b) => b.priority - a.priority
+    );
   }
 
   // 按类型列出白名单
   listWhitelistsByType(type: Whitelist['type']): Whitelist[] {
     return Array.from(this.whitelists.values())
-      .filter(whitelist => whitelist.type === type)
+      .filter((whitelist) => whitelist.type === type)
       .sort((a, b) => b.priority - a.priority);
   }
 
   // 更新白名单
-  updateWhitelist(whitelistId: string, updates: Partial<Whitelist>): Whitelist | null {
+  updateWhitelist(
+    whitelistId: string,
+    updates: Partial<Whitelist>
+  ): Whitelist | null {
     const whitelist = this.whitelists.get(whitelistId);
     if (!whitelist) {
       return null;
@@ -349,8 +362,10 @@ export class WhitelistManager {
     }
 
     const originalLength = whitelist.items.length;
-    whitelist.items = whitelist.items.filter(item => !item.expiresAt || item.expiresAt >= Date.now());
-    
+    whitelist.items = whitelist.items.filter(
+      (item) => !item.expiresAt || item.expiresAt >= Date.now()
+    );
+
     if (whitelist.items.length !== originalLength) {
       whitelist.updatedAt = Date.now();
       whitelist.version += 1;

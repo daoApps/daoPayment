@@ -11,7 +11,7 @@ export {
   WhitelistManager,
   EnhancedPolicyManager,
   PolicyEngine,
-  PolicyStorage
+  PolicyStorage,
 };
 
 export default SecurityManager;

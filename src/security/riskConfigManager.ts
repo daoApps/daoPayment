@@ -40,10 +40,8 @@ class RiskConfigManager {
           description: 'Detect transactions with high amount',
           enabled: true,
           weight: 30,
-          conditions: [
-            { type: 'amount', operator: 'gt', value: 10000 }
-          ],
-          alertMessage: 'High amount transaction detected'
+          conditions: [{ type: 'amount', operator: 'gt', value: 10000 }],
+          alertMessage: 'High amount transaction detected',
         },
         {
           id: 'medium_amount',
@@ -51,10 +49,8 @@ class RiskConfigManager {
           description: 'Detect transactions with medium amount',
           enabled: true,
           weight: 15,
-          conditions: [
-            { type: 'amount', operator: 'gt', value: 1000 }
-          ],
-          alertMessage: 'Medium amount transaction detected'
+          conditions: [{ type: 'amount', operator: 'gt', value: 1000 }],
+          alertMessage: 'Medium amount transaction detected',
         },
         {
           id: 'new_recipient',
@@ -63,9 +59,9 @@ class RiskConfigManager {
           enabled: true,
           weight: 25,
           conditions: [
-            { type: 'recipient', operator: 'eq', value: 'isNewRecipient' }
+            { type: 'recipient', operator: 'eq', value: 'isNewRecipient' },
           ],
-          alertMessage: 'Transaction to new recipient'
+          alertMessage: 'Transaction to new recipient',
         },
         {
           id: 'off_hours',
@@ -73,10 +69,8 @@ class RiskConfigManager {
           description: 'Detect transactions during off-hours',
           enabled: true,
           weight: 10,
-          conditions: [
-            { type: 'time', operator: 'in', value: 'offHours' }
-          ],
-          alertMessage: 'Transaction during off-hours'
+          conditions: [{ type: 'time', operator: 'in', value: 'offHours' }],
+          alertMessage: 'Transaction during off-hours',
         },
         {
           id: 'high_risk_method',
@@ -85,9 +79,9 @@ class RiskConfigManager {
           enabled: true,
           weight: 20,
           conditions: [
-            { type: 'method', operator: 'in', value: ['approve', 'delegate'] }
+            { type: 'method', operator: 'in', value: ['approve', 'delegate'] },
           ],
-          alertMessage: 'High-risk method detected'
+          alertMessage: 'High-risk method detected',
         },
         {
           id: 'high_risk_category',
@@ -96,18 +90,18 @@ class RiskConfigManager {
           enabled: true,
           weight: 25,
           conditions: [
-            { type: 'category', operator: 'eq', value: 'high_risk' }
+            { type: 'category', operator: 'eq', value: 'high_risk' },
           ],
-          alertMessage: 'High-risk category transaction'
-        }
+          alertMessage: 'High-risk category transaction',
+        },
       ],
       thresholds: {
         denyThreshold: 70,
-        approvalThreshold: 40
+        approvalThreshold: 40,
       },
       timeRanges: {
-        offHours: { start: 22, end: 6 }
-      }
+        offHours: { start: 22, end: 6 },
+      },
     };
   }
 }

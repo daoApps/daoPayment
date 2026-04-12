@@ -37,7 +37,14 @@ class EnhancedPolicyManager {
     parentId?: string,
     tags?: string[]
   ): Promise<Policy> {
-    const policy = this.policyEngine.createPolicy(id, name, description, rules, parentId, tags);
+    const policy = this.policyEngine.createPolicy(
+      id,
+      name,
+      description,
+      rules,
+      parentId,
+      tags
+    );
     await this.policyStorage.savePolicy(policy);
     return policy;
   }
@@ -51,7 +58,14 @@ class EnhancedPolicyManager {
     additionalRules: PolicyRule[] = [],
     tags?: string[]
   ): Promise<Policy | null> {
-    const policy = this.policyEngine.createPolicyFromParent(id, name, description, parentId, additionalRules, tags);
+    const policy = this.policyEngine.createPolicyFromParent(
+      id,
+      name,
+      description,
+      parentId,
+      additionalRules,
+      tags
+    );
     if (policy) {
       await this.policyStorage.savePolicy(policy);
     }
@@ -65,7 +79,12 @@ class EnhancedPolicyManager {
     description: string,
     updatedRules: PolicyRule[]
   ): Promise<Policy | null> {
-    const policy = this.policyEngine.createPolicyVersion(policyId, name, description, updatedRules);
+    const policy = this.policyEngine.createPolicyVersion(
+      policyId,
+      name,
+      description,
+      updatedRules
+    );
     if (policy) {
       await this.policyStorage.savePolicy(policy);
     }
@@ -95,7 +114,10 @@ class EnhancedPolicyManager {
   }
 
   // 更新策略
-  async updatePolicy(id: string, updates: Partial<Policy>): Promise<Policy | null> {
+  async updatePolicy(
+    id: string,
+    updates: Partial<Policy>
+  ): Promise<Policy | null> {
     const policy = this.policyEngine.updatePolicy(id, updates);
     if (policy) {
       await this.policyStorage.savePolicy(policy);

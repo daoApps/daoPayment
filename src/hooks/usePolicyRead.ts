@@ -27,15 +27,11 @@ export function usePolicyRead({
   contractAddress,
   policyId,
 }: UsePolicyReadParams) {
-  const isAddressValid = contractAddress && 
+  const isAddressValid =
+    contractAddress &&
     contractAddress !== '0x0000000000000000000000000000000000000000';
 
-  const {
-    data,
-    isError,
-    isLoading,
-    error,
-  } = useReadContract({
+  const { data, isError, isLoading, error } = useReadContract({
     address: contractAddress,
     abi: POLICY_ABI,
     functionName: 'getPolicy',

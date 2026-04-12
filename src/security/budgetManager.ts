@@ -176,11 +176,7 @@ class BudgetManager {
 
   private resetMonthlyBudgets(): void {
     const now = new Date();
-    const monthStart = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      1
-    ).getTime();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
 
     for (const [_address, budget] of this.budgets.entries()) {
       if (budget.lastMonthResetDate < monthStart) {
@@ -193,11 +189,7 @@ class BudgetManager {
 
   private resetYearlyBudgets(): void {
     const now = new Date();
-    const yearStart = new Date(
-      now.getFullYear(),
-      0,
-      1
-    ).getTime();
+    const yearStart = new Date(now.getFullYear(), 0, 1).getTime();
 
     for (const [_address, budget] of this.budgets.entries()) {
       if (budget.lastYearResetDate < yearStart) {
@@ -237,16 +229,8 @@ class BudgetManager {
       now.getMonth(),
       now.getDate() - now.getDay()
     ).getTime();
-    const monthStart = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      1
-    ).getTime();
-    const yearStart = new Date(
-      now.getFullYear(),
-      0,
-      1
-    ).getTime();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+    const yearStart = new Date(now.getFullYear(), 0, 1).getTime();
 
     const budget: Budget = {
       walletAddress,
@@ -357,34 +341,50 @@ class BudgetManager {
     }
 
     // 检查预算警报
-    const dailyPercentage = ((budget!.dailySpent + amount) / budget!.dailyLimit) * 100;
-    const weeklyPercentage = ((budget!.weeklySpent + amount) / budget!.weeklyLimit) * 100;
-    const monthlyPercentage = ((budget!.monthlySpent + amount) / budget!.monthlyLimit) * 100;
-    const yearlyPercentage = ((budget!.yearlySpent + amount) / budget!.yearlyLimit) * 100;
+    const dailyPercentage =
+      ((budget!.dailySpent + amount) / budget!.dailyLimit) * 100;
+    const weeklyPercentage =
+      ((budget!.weeklySpent + amount) / budget!.weeklyLimit) * 100;
+    const monthlyPercentage =
+      ((budget!.monthlySpent + amount) / budget!.monthlyLimit) * 100;
+    const yearlyPercentage =
+      ((budget!.yearlySpent + amount) / budget!.yearlyLimit) * 100;
 
     if (dailyPercentage >= budget!.alerts.daily) {
-      alerts.push(`Daily budget alert: ${Math.round(dailyPercentage)}% of limit reached`);
+      alerts.push(
+        `Daily budget alert: ${Math.round(dailyPercentage)}% of limit reached`
+      );
     }
 
     if (weeklyPercentage >= budget!.alerts.weekly) {
-      alerts.push(`Weekly budget alert: ${Math.round(weeklyPercentage)}% of limit reached`);
+      alerts.push(
+        `Weekly budget alert: ${Math.round(weeklyPercentage)}% of limit reached`
+      );
     }
 
     if (monthlyPercentage >= budget!.alerts.monthly) {
-      alerts.push(`Monthly budget alert: ${Math.round(monthlyPercentage)}% of limit reached`);
+      alerts.push(
+        `Monthly budget alert: ${Math.round(monthlyPercentage)}% of limit reached`
+      );
     }
 
     if (yearlyPercentage >= budget!.alerts.yearly) {
-      alerts.push(`Yearly budget alert: ${Math.round(yearlyPercentage)}% of limit reached`);
+      alerts.push(
+        `Yearly budget alert: ${Math.round(yearlyPercentage)}% of limit reached`
+      );
     }
 
-    return { 
+    return {
       allowed: true,
-      alerts: alerts.length > 0 ? alerts : undefined
+      alerts: alerts.length > 0 ? alerts : undefined,
     };
   }
 
-  updateSpent(walletAddress: string, amount: number, description: string = 'Payment'): void {
+  updateSpent(
+    walletAddress: string,
+    amount: number,
+    description: string = 'Payment'
+  ): void {
     const budget = this.budgets.get(walletAddress);
     if (budget) {
       budget.dailySpent += amount;
@@ -399,7 +399,11 @@ class BudgetManager {
   }
 
   // 增加预算（用于退款等场景）
-  addToBudget(walletAddress: string, amount: number, description: string = 'Refund'): void {
+  addToBudget(
+    walletAddress: string,
+    amount: number,
+    description: string = 'Refund'
+  ): void {
     const budget = this.budgets.get(walletAddress);
     if (budget) {
       budget.dailySpent = Math.max(0, budget.dailySpent - amount);
@@ -414,7 +418,10 @@ class BudgetManager {
   }
 
   // 获取预算历史记录
-  getBudgetHistory(walletAddress: string, limit: number = 100): BudgetHistory[] {
+  getBudgetHistory(
+    walletAddress: string,
+    limit: number = 100
+  ): BudgetHistory[] {
     const history = this.budgetHistory.get(walletAddress) || [];
     return history.slice(-limit).reverse(); // 按时间倒序返回
   }
@@ -440,22 +447,34 @@ class BudgetManager {
       daily: {
         spent: budget.dailySpent,
         limit: budget.dailyLimit,
-        percentage: budget.dailyLimit > 0 ? (budget.dailySpent / budget.dailyLimit) * 100 : 0,
+        percentage:
+          budget.dailyLimit > 0
+            ? (budget.dailySpent / budget.dailyLimit) * 100
+            : 0,
       },
       weekly: {
         spent: budget.weeklySpent,
         limit: budget.weeklyLimit,
-        percentage: budget.weeklyLimit > 0 ? (budget.weeklySpent / budget.weeklyLimit) * 100 : 0,
+        percentage:
+          budget.weeklyLimit > 0
+            ? (budget.weeklySpent / budget.weeklyLimit) * 100
+            : 0,
       },
       monthly: {
         spent: budget.monthlySpent,
         limit: budget.monthlyLimit,
-        percentage: budget.monthlyLimit > 0 ? (budget.monthlySpent / budget.monthlyLimit) * 100 : 0,
+        percentage:
+          budget.monthlyLimit > 0
+            ? (budget.monthlySpent / budget.monthlyLimit) * 100
+            : 0,
       },
       yearly: {
         spent: budget.yearlySpent,
         limit: budget.yearlyLimit,
-        percentage: budget.yearlyLimit > 0 ? (budget.yearlySpent / budget.yearlyLimit) * 100 : 0,
+        percentage:
+          budget.yearlyLimit > 0
+            ? (budget.yearlySpent / budget.yearlyLimit) * 100
+            : 0,
       },
     };
   }
@@ -480,11 +499,7 @@ class BudgetManager {
         now.getMonth(),
         1
       ).getTime();
-      const yearStart = new Date(
-        now.getFullYear(),
-        0,
-        1
-      ).getTime();
+      const yearStart = new Date(now.getFullYear(), 0, 1).getTime();
 
       budget.dailySpent = 0;
       budget.weeklySpent = 0;
@@ -504,7 +519,10 @@ class BudgetManager {
     return this.budgets.get(walletAddress);
   }
 
-  resetBudget(walletAddress: string, period: 'daily' | 'weekly' | 'monthly' | 'yearly' | 'all' = 'all'): void {
+  resetBudget(
+    walletAddress: string,
+    period: 'daily' | 'weekly' | 'monthly' | 'yearly' | 'all' = 'all'
+  ): void {
     const budget = this.budgets.get(walletAddress);
     if (budget) {
       const now = new Date();
@@ -523,11 +541,7 @@ class BudgetManager {
         now.getMonth(),
         1
       ).getTime();
-      const yearStart = new Date(
-        now.getFullYear(),
-        0,
-        1
-      ).getTime();
+      const yearStart = new Date(now.getFullYear(), 0, 1).getTime();
 
       if (period === 'daily' || period === 'all') {
         budget.dailySpent = 0;

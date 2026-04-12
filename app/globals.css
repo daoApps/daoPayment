@@ -3,18 +3,121 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-rgb: 255, 255, 255;
+  --bg-primary: #0a0b10;
+  --bg-secondary: #12141d;
+  --bg-tertiary: #1a1d2b;
+  --accent-primary: #7b61ff;
+  --accent-secondary: #00d4ff;
+  --accent-success: #4cff9c;
+  --accent-warning: #ffb86b;
+  --accent-danger: #ff6b6b;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #64748b;
+  --border-color: #2a2f45;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-rgb: 0, 0, 0;
+@layer base {
+  body {
+    @apply bg-bg-primary text-text-primary;
+    font-family: var(--font-sora), system-ui, sans-serif;
+  }
+
+  ::selection {
+    @apply bg-accent-primary/30 text-text-primary;
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb));
+@layer components {
+  .glass-panel {
+    @apply bg-bg-secondary/80 backdrop-blur-md border border-border-color rounded-2xl;
+    box-shadow:
+      0 4px 24px -1px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
+  }
+
+  .glass-card {
+    @apply bg-bg-tertiary/60 backdrop-blur-sm border border-border-color rounded-xl;
+    transition: all 0.2s ease;
+  }
+
+  .glass-card:hover {
+    @apply border-accent-primary/40;
+    transform: translateY(-2px);
+    box-shadow:
+      0 8px 32px -4px rgba(123, 97, 255, 0.15),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .btn-primary {
+    @apply px-6 py-3 rounded-xl font-medium text-white bg-gradient-to-r from-accent-primary to-accent-secondary
+           hover:shadow-lg hover:shadow-accent-primary/25 transition-all duration-200
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 rounded-xl font-medium text-text-primary border border-border-color bg-bg-tertiary
+           hover:border-accent-primary/50 transition-all duration-200
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .badge {
+    @apply px-3 py-1 rounded-full text-xs font-medium;
+  }
+
+  .badge-success {
+    @apply bg-accent-success/10 text-accent-success border border-accent-success/20;
+  }
+
+  .badge-warning {
+    @apply bg-accent-warning/10 text-accent-warning border border-accent-warning/20;
+  }
+
+  .badge-danger {
+    @apply bg-accent-danger/10 text-accent-danger border border-accent-danger/20;
+  }
+
+  .badge-primary {
+    @apply bg-accent-primary/10 text-accent-primary border border-accent-primary/20;
+  }
+
+  .input {
+    @apply w-full px-4 py-3 rounded-xl bg-bg-tertiary border border-border-color
+           text-text-primary placeholder:text-text-muted
+           focus:outline-none focus:ring-2 focus:ring-accent-primary/30 focus:border-accent-primary/50
+           transition-all duration-200;
+  }
+
+  .label {
+    @apply text-sm font-medium text-text-secondary mb-2 block;
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-primary to-accent-secondary;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .grid-dao-pattern {
+    background-image:
+      linear-gradient(to right, rgba(42, 47, 69, 0.3) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(42, 47, 69, 0.3) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
 }

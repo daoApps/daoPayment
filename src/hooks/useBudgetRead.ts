@@ -25,15 +25,11 @@ export function useBudgetRead({
   contractAddress,
   walletAddress,
 }: UseBudgetReadParams) {
-  const isAddressValid = contractAddress && 
+  const isAddressValid =
+    contractAddress &&
     contractAddress !== '0x0000000000000000000000000000000000000000';
 
-  const {
-    data,
-    isError,
-    isLoading,
-    error,
-  } = useReadContract({
+  const { data, isError, isLoading, error } = useReadContract({
     address: contractAddress,
     abi: BUDGET_ABI,
     functionName: 'getBudget',

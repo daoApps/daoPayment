@@ -1,11 +1,25 @@
-import type { Metadata } from 'next';
 import './globals.css';
-import I18nClientLayout from './I18nClientLayout';
-import WagmiProviderWrapper from './WagmiProvider';
+import type { Metadata } from 'next';
+import { Providers } from './providers';
+import { Sora, Space_Mono } from 'next/font/google';
+
+const sora = Sora({
+  subsets: ['latin'],
+  variable: '--font-sora',
+  display: 'swap',
+});
+
+const spaceMono = Space_Mono({
+  weight: ['400', '700'],
+  subsets: ['latin'],
+  variable: '--font-space-mono',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
-  title: 'DAO Payment',
-  description: 'Web3 DAO Payment Application',
+  title: 'daoPayment - Agentic Payment on Monad',
+  description:
+    'Secure, agent-native payment system for DAOs on Monad blockchain',
 };
 
 export default function RootLayout({
@@ -14,11 +28,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body>
-        <WagmiProviderWrapper>
-          <I18nClientLayout>{children}</I18nClientLayout>
-        </WagmiProviderWrapper>
+    <html lang="en" className="dark">
+      <body
+        className={`${sora.variable} ${spaceMono.variable} font-sans antialiased`}
+      >
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

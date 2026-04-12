@@ -31,11 +31,20 @@ class SecurityManager {
     parentId?: string,
     tags?: string[]
   ): Promise<void> {
-    await this.policyManager.createPolicy(policyId, name, description, rules, parentId, tags);
+    await this.policyManager.createPolicy(
+      policyId,
+      name,
+      description,
+      rules,
+      parentId,
+      tags
+    );
   }
 
   // 创建默认策略模板
-  async createTemplatePolicy(templateType: 'default' | 'strict' | 'permissive'): Promise<any> {
+  async createTemplatePolicy(
+    templateType: 'default' | 'strict' | 'permissive'
+  ): Promise<any> {
     return this.policyManager.createTemplatePolicy(templateType);
   }
 
@@ -93,7 +102,12 @@ class SecurityManager {
     }
 
     // 3. 检查白名单
-    const whitelistCheck = this.checkWhitelist(recipient, token, category, method);
+    const whitelistCheck = this.checkWhitelist(
+      recipient,
+      token,
+      category,
+      method
+    );
     if (!whitelistCheck.allowed) {
       return {
         allowed: false,
@@ -103,14 +117,28 @@ class SecurityManager {
     }
 
     // 4. 风险评估
-    const riskAssessment = this.assessRisk(walletAddress, amount, recipient, token, method, category, metadata);
+    const riskAssessment = this.assessRisk(
+      walletAddress,
+      amount,
+      recipient,
+      token,
+      method,
+      category,
+      metadata
+    );
     riskScore = riskAssessment.score;
     if (riskAssessment.alerts) {
       alerts.push(...riskAssessment.alerts);
     }
 
     // 5. 异常检测
-    const anomalyCheck = this.detectAnomalies(walletAddress, amount, recipient, token, method);
+    const anomalyCheck = this.detectAnomalies(
+      walletAddress,
+      amount,
+      recipient,
+      token,
+      method
+    );
     if (!anomalyCheck.allowed) {
       return {
         allowed: false,
@@ -120,7 +148,13 @@ class SecurityManager {
     }
 
     // 6. 交易模式分析
-    const patternAnalysis = this.analyzeTransactionPattern(walletAddress, amount, recipient, token, method);
+    const patternAnalysis = this.analyzeTransactionPattern(
+      walletAddress,
+      amount,
+      recipient,
+      token,
+      method
+    );
     if (!patternAnalysis.allowed) {
       return {
         allowed: false,
@@ -130,7 +164,11 @@ class SecurityManager {
     }
 
     // 7. 综合评估
-    const finalDecision = this.makeFinalDecision(policyCheck.action, riskScore, alerts);
+    const finalDecision = this.makeFinalDecision(
+      policyCheck.action,
+      riskScore,
+      alerts
+    );
 
     return {
       allowed: finalDecision.allowed,
@@ -152,50 +190,65 @@ class SecurityManager {
     reason?: string;
   } {
     // 获取所有活跃的白名单
-    const whitelists = this.whitelistManager.listWhitelists().filter(w => w.active);
-    
+    const whitelists = this.whitelistManager
+      .listWhitelists()
+      .filter((w) => w.active);
+
     // 按优先级排序
     whitelists.sort((a, b) => b.priority - a.priority);
 
     for (const whitelist of whitelists) {
       switch (whitelist.type) {
         case 'recipients':
-          if (whitelist.items.some(item => item.value === recipient)) {
+          if (whitelist.items.some((item) => item.value === recipient)) {
             return { allowed: true };
           }
           break;
         case 'tokens':
-          if (whitelist.items.some(item => item.value === token)) {
+          if (whitelist.items.some((item) => item.value === token)) {
             return { allowed: true };
           }
           break;
         case 'categories':
-          if (whitelist.items.some(item => item.value === category)) {
+          if (whitelist.items.some((item) => item.value === category)) {
             return { allowed: true };
           }
           break;
         case 'methods':
-          if (whitelist.items.some(item => item.value === method)) {
+          if (whitelist.items.some((item) => item.value === method)) {
             return { allowed: true };
           }
           break;
         case 'mixed':
           // 混合类型白名单，检查所有条件
-          const recipientAllowed = whitelist.items.some(item => item.value === recipient);
-          const tokenAllowed = whitelist.items.some(item => item.value === token);
-          const categoryAllowed = whitelist.items.some(item => item.value === category);
-          const methodAllowed = whitelist.items.some(item => item.value === method);
-          
-          if (recipientAllowed && tokenAllowed && categoryAllowed && methodAllowed) {
+          const recipientAllowed = whitelist.items.some(
+            (item) => item.value === recipient
+          );
+          const tokenAllowed = whitelist.items.some(
+            (item) => item.value === token
+          );
+          const categoryAllowed = whitelist.items.some(
+            (item) => item.value === category
+          );
+          const methodAllowed = whitelist.items.some(
+            (item) => item.value === method
+          );
+
+          if (
+            recipientAllowed &&
+            tokenAllowed &&
+            categoryAllowed &&
+            methodAllowed
+          ) {
             return { allowed: true };
           }
           break;
       }
     }
 
-    return { 
-      allowed: false, 
-      reason: 'Not in any whitelist'
+    return {
+      allowed: false,
+      reason: 'Not in any whitelist',
     };
   }
 
@@ -216,10 +269,19 @@ class SecurityManager {
     let score = 0;
 
     const config = this.riskConfigManager.getConfig();
-    const enabledRules = config.rules.filter(rule => rule.enabled);
+    const enabledRules = config.rules.filter((rule) => rule.enabled);
 
     for (const rule of enabledRules) {
-      if (this.evaluateRiskRule(rule, amount, recipient, method, category, metadata)) {
+      if (
+        this.evaluateRiskRule(
+          rule,
+          amount,
+          recipient,
+          method,
+          category,
+          metadata
+        )
+      ) {
         score += rule.weight;
         alerts.push(rule.alertMessage);
       }
@@ -280,19 +342,25 @@ class SecurityManager {
     }
   }
 
-  private evaluateRecipientCondition(metadata: Record<string, any> | undefined, condition: any): boolean {
+  private evaluateRecipientCondition(
+    metadata: Record<string, any> | undefined,
+    condition: any
+  ): boolean {
     if (condition.operator === 'eq' && condition.value === 'isNewRecipient') {
       return !!metadata?.isNewRecipient;
     }
     return false;
   }
 
-  private evaluateTimeCondition(config: RiskAssessmentConfig, condition: any): boolean {
+  private evaluateTimeCondition(
+    config: RiskAssessmentConfig,
+    condition: any
+  ): boolean {
     if (condition.value === 'offHours') {
       const now = new Date();
       const hour = now.getHours();
       const { start, end } = config.timeRanges.offHours;
-      
+
       if (start > end) {
         return hour >= start || hour < end;
       } else {
@@ -344,7 +412,7 @@ class SecurityManager {
       if (dailyPercentage > 90) {
         return {
           allowed: false,
-          reason: 'Abnormally large transaction relative to daily budget'
+          reason: 'Abnormally large transaction relative to daily budget',
         };
       }
     }
@@ -371,16 +439,17 @@ class SecurityManager {
 
     // 简单实现：检测相同金额的重复交易
     const history = this.budgetManager.getBudgetHistory(walletAddress, 10);
-    const recentSimilarTransactions = history.filter(h => 
-      h.amount === amount && 
-      h.type === 'debit' &&
-      (Date.now() - h.timestamp) < 3600000 // 1小时内
+    const recentSimilarTransactions = history.filter(
+      (h) =>
+        h.amount === amount &&
+        h.type === 'debit' &&
+        Date.now() - h.timestamp < 3600000 // 1小时内
     );
 
     if (recentSimilarTransactions.length > 3) {
       return {
         allowed: false,
-        reason: 'Multiple similar transactions detected in a short period'
+        reason: 'Multiple similar transactions detected in a short period',
       };
     }
 
@@ -414,7 +483,10 @@ class SecurityManager {
         reason: 'High risk transaction',
         requiresHumanApproval: false,
       };
-    } else if (riskScore > approvalThreshold || policyAction === 'require_approval') {
+    } else if (
+      riskScore > approvalThreshold ||
+      policyAction === 'require_approval'
+    ) {
       return {
         allowed: true,
         requiresHumanApproval: true,
@@ -428,17 +500,28 @@ class SecurityManager {
   }
 
   // 更新预算
-  updateBudget(walletAddress: string, amount: number, description: string = 'Payment'): void {
+  updateBudget(
+    walletAddress: string,
+    amount: number,
+    description: string = 'Payment'
+  ): void {
     this.budgetManager.updateSpent(walletAddress, amount, description);
   }
 
   // 增加预算（用于退款等场景）
-  addToBudget(walletAddress: string, amount: number, description: string = 'Refund'): void {
+  addToBudget(
+    walletAddress: string,
+    amount: number,
+    description: string = 'Refund'
+  ): void {
     this.budgetManager.addToBudget(walletAddress, amount, description);
   }
 
   // 获取安全评估报告
-  getSecurityReport(policyId: string, walletAddress: string): {
+  getSecurityReport(
+    policyId: string,
+    walletAddress: string
+  ): {
     policy: any;
     budget: any;
     whitelists: any[];
@@ -447,13 +530,13 @@ class SecurityManager {
     const policy = this.policyManager.getPolicy(policyId);
     const budget = this.budgetManager.getBudget(walletAddress);
     const whitelists = this.whitelistManager.listWhitelists();
-    
+
     // 计算风险分数（基于历史交易）
     const history = this.budgetManager.getBudgetHistory(walletAddress, 10);
     let riskScore = 0;
-    
+
     if (history.length > 0) {
-      const recentHighAmounts = history.filter(h => h.amount > 1000);
+      const recentHighAmounts = history.filter((h) => h.amount > 1000);
       riskScore = recentHighAmounts.length * 10;
     }
 
@@ -494,25 +577,17 @@ class SecurityManager {
     return this.whitelistManager.addToWhitelist(whitelistId, items, expiresAt);
   }
 
-  removeFromWhitelist(
-    whitelistId: string,
-    items: string[]
-  ): boolean {
+  removeFromWhitelist(whitelistId: string, items: string[]): boolean {
     return this.whitelistManager.removeFromWhitelist(whitelistId, items);
   }
 
   // 激活/停用白名单
-  toggleWhitelist(
-    whitelistId: string,
-    active: boolean
-  ): boolean {
+  toggleWhitelist(whitelistId: string, active: boolean): boolean {
     return this.whitelistManager.toggleWhitelist(whitelistId, active);
   }
 
   // 清理过期白名单项目
-  cleanupExpiredWhitelistItems(
-    whitelistId: string
-  ): number {
+  cleanupExpiredWhitelistItems(whitelistId: string): number {
     return this.whitelistManager.cleanupExpiredItems(whitelistId);
   }
 

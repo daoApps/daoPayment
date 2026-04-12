@@ -26,7 +26,10 @@ async function testNonCustodialWallet() {
     // 测试4: 从安全存储加载钱包
     console.log('4. 从安全存储加载钱包...');
     try {
-      const loadedWallet = NonCustodialWallet.loadSecurely(address, encryptionKey);
+      const loadedWallet = NonCustodialWallet.loadSecurely(
+        address,
+        encryptionKey
+      );
       console.log(`   加载的钱包地址: ${loadedWallet.getAddress()}`);
       console.log('   ✅ 钱包加载成功\n');
     } catch (error) {
@@ -53,7 +56,9 @@ async function testNonCustodialWallet() {
       console.log(`   钱包余额: ${balance.toString()} wei`);
       console.log('   ✅ 余额查询成功\n');
     } catch (error) {
-      console.log(`   ⚠️  余额查询失败（可能是网络问题）: ${(error as Error).message}\n`);
+      console.log(
+        `   ⚠️  余额查询失败（可能是网络问题）: ${(error as Error).message}\n`
+      );
     }
 
     // 测试7: 导出钱包
@@ -76,7 +81,9 @@ async function testNonCustodialWallet() {
       console.log('   ✅ MPP信息获取成功');
       console.log(`   MPP版本: ${mppInfo.version || '未知'}\n`);
     } catch (error) {
-      console.log(`   ⚠️  MPP信息获取失败（可能是网络问题）: ${(error as Error).message}\n`);
+      console.log(
+        `   ⚠️  MPP信息获取失败（可能是网络问题）: ${(error as Error).message}\n`
+      );
     }
 
     // 测试10: 批量支付功能
@@ -96,7 +103,9 @@ async function testNonCustodialWallet() {
       console.log(`   生成的凭证数量: ${credentials.length}`);
       console.log('   ✅ 批量支付功能测试成功\n');
     } catch (error) {
-      console.log(`   ⚠️  批量支付测试失败（可能是网络问题）: ${(error as Error).message}\n`);
+      console.log(
+        `   ⚠️  批量支付测试失败（可能是网络问题）: ${(error as Error).message}\n`
+      );
     }
 
     console.log('=== 所有测试完成 ===');

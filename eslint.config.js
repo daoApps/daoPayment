@@ -13,6 +13,9 @@ export default [
       '.next/**',
       'audit-records/**',
       'examples/**',
+      'lib/**',
+      'contracts/**',
+      '.agents/**',
     ],
   },
   {

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useTranslation } from '../i18n';
+import { useTranslation } from '../i18n/index';
 
 export default function LanguageSwitcher() {
   const { language, toggleLanguage, t } = useTranslation();

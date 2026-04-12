@@ -76,7 +76,11 @@ export default function PendingTransactionsList({
   };
 
   if (loading) {
-    return <div className="p-4 text-text-primary">Loading pending transactions...</div>;
+    return (
+      <div className="p-4 text-text-primary">
+        Loading pending transactions...
+      </div>
+    );
   }
 
   if (error) {
@@ -84,7 +88,9 @@ export default function PendingTransactionsList({
   }
 
   if (transactions.length === 0) {
-    return <div className="p-4 text-text-secondary">No pending transactions</div>;
+    return (
+      <div className="p-4 text-text-secondary">No pending transactions</div>
+    );
   }
 
   return (
@@ -93,7 +99,10 @@ export default function PendingTransactionsList({
         Pending Transactions ({transactions.length})
       </h3>
       {transactions.map((tx) => (
-        <div key={tx.safeTxHash} className="border border-border-color rounded-lg p-4 space-y-2 bg-bg-tertiary">
+        <div
+          key={tx.safeTxHash}
+          className="border border-border-color rounded-lg p-4 space-y-2 bg-bg-tertiary"
+        >
           <div className="flex justify-between items-start">
             <div>
               <p className="text-sm text-text-secondary">
@@ -102,7 +111,9 @@ export default function PendingTransactionsList({
                   {tx.to.slice(0, 6)}...{tx.to.slice(-4)}
                 </span>
               </p>
-              <p className="text-sm text-text-secondary">Value: {tx.value} wei</p>
+              <p className="text-sm text-text-secondary">
+                Value: {tx.value} wei
+              </p>
               <p className="text-sm text-text-secondary">
                 Confirmations: {confirmationsCount(tx)} /{' '}
                 {tx.confirmationsRequired}

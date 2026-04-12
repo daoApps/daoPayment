@@ -172,15 +172,16 @@ class PolicyEngine {
 
   // 按标签搜索策略
   searchPoliciesByTag(tag: string): Policy[] {
-    return Array.from(this.policies.values()).filter(policy => 
-      policy.tags && policy.tags.includes(tag)
+    return Array.from(this.policies.values()).filter(
+      (policy) => policy.tags && policy.tags.includes(tag)
     );
   }
 
   // 获取策略的所有版本
   getPolicyVersions(policyBaseId: string): Policy[] {
-    return Array.from(this.policies.values()).filter(policy => 
-      policy.id === policyBaseId || policy.id.startsWith(`${policyBaseId}-v`)
+    return Array.from(this.policies.values()).filter(
+      (policy) =>
+        policy.id === policyBaseId || policy.id.startsWith(`${policyBaseId}-v`)
     );
   }
 

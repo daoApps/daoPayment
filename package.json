@@ -4,7 +4,8 @@
   "description": "Agent-native secure payment system for Monad blockchain",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
+    "dev:turbo": "next dev --turbopack",
     "build": "npm run build:lib && next build",
     "build:lib": "tsc -p tsconfig.cli.json",
     "start": "next start",

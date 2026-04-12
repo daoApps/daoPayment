@@ -32,7 +32,10 @@ class NonCustodialWallet {
    * @param encryptionKey 加密密钥
    * @param storagePath 存储路径
    */
-  initSecureStorage(encryptionKey: string, storagePath: string = './secure-storage'): void {
+  initSecureStorage(
+    encryptionKey: string,
+    storagePath: string = './secure-storage'
+  ): void {
     this.secureStorage = new SecureStorage(encryptionKey, storagePath);
   }
 
@@ -43,13 +46,13 @@ class NonCustodialWallet {
     if (!this.secureStorage) {
       throw new Error('Secure storage not initialized');
     }
-    
+
     const walletData = {
       privateKey: (this.account as any).privateKey,
       address: this.account.address,
       walletId: this.walletId,
     };
-    
+
     this.secureStorage.save(this.walletId, JSON.stringify(walletData));
   }
 
@@ -59,21 +62,28 @@ class NonCustodialWallet {
    * @param encryptionKey 加密密钥
    * @param storagePath 存储路径
    */
-  static loadSecurely(walletId: string, encryptionKey: string, storagePath: string = './secure-storage'): NonCustodialWallet {
+  static loadSecurely(
+    walletId: string,
+    encryptionKey: string,
+    storagePath: string = './secure-storage'
+  ): NonCustodialWallet {
     const secureStorage = new SecureStorage(encryptionKey, storagePath);
     const walletDataStr = secureStorage.load(walletId);
-    
+
     if (!walletDataStr) {
       throw new Error('Wallet not found in secure storage');
     }
-    
+
     try {
       const walletData = JSON.parse(walletDataStr);
       if (!walletData.privateKey) {
         throw new Error('Invalid wallet data: missing privateKey');
       }
-      
-      const wallet = new NonCustodialWallet(walletData.privateKey as `0x${string}`, walletId);
+
+      const wallet = new NonCustodialWallet(
+        walletData.privateKey as `0x${string}`,
+        walletId
+      );
       wallet.secureStorage = secureStorage;
       return wallet;
     } catch (error) {
@@ -173,7 +183,10 @@ class NonCustodialWallet {
    * @param transaction 交易对象
    * @param chainId 链ID
    */
-  async executeTransaction(transaction: any, chainId: number = 10143): Promise<`0x${string}`> {
+  async executeTransaction(
+    transaction: any,
+    chainId: number = 10143
+  ): Promise<`0x${string}`> {
     try {
       const { sendTransaction } = await import('viem/actions');
       const client = await this.getClient(chainId);
@@ -193,33 +206,35 @@ class NonCustodialWallet {
    * @param chainId 链ID
    */
   private async getClient(chainId: number) {
-    const defaultChain = chainId === monadChain.id 
-      ? monadChain 
-      : {
-          id: chainId,
-          name: `Chain ${chainId}`,
-          nativeCurrency: {
-            name: 'Ethereum',
-            symbol: 'ETH',
-            decimals: 18,
-          },
-          rpcUrls: {
-            default: {
-              http: [`https://rpc.chain${chainId}.xyz`],
+    const defaultChain =
+      chainId === monadChain.id
+        ? monadChain
+        : {
+            id: chainId,
+            name: `Chain ${chainId}`,
+            nativeCurrency: {
+              name: 'Ethereum',
+              symbol: 'ETH',
+              decimals: 18,
             },
-          },
-        };
-    
-    const url = chainId === monadChain.id 
-      ? `https://rpc.monad.xyz` 
-      : `https://rpc.chain${chainId}.xyz`;
-    
-    const client = createClient({ 
-      chain: defaultChain, 
+            rpcUrls: {
+              default: {
+                http: [`https://rpc.chain${chainId}.xyz`],
+              },
+            },
+          };
+
+    const url =
+      chainId === monadChain.id
+        ? `https://rpc.monad.xyz`
+        : `https://rpc.chain${chainId}.xyz`;
+
+    const client = createClient({
+      chain: defaultChain,
       transport: http(url),
-      account: this.account
+      account: this.account,
     });
-    
+
     return client;
   }
 
@@ -280,18 +295,21 @@ class NonCustodialWallet {
    * 使用MPP协议进行批量支付
    * @param payments 支付列表
    */
-  async batchPayments(payments: Array<{
-    to: `0x${string}`;
-    amount: bigint;
-    currency?: `0x${string}`;
-  }>): Promise<Array<`0x${string}`>> {
+  async batchPayments(
+    payments: Array<{
+      to: `0x${string}`;
+      amount: bigint;
+      currency?: `0x${string}`;
+    }>
+  ): Promise<Array<`0x${string}`>> {
     try {
       const credentials = await Promise.all(
         payments.map(async (payment) => {
           return this.generateMPPCredential({
             recipient: payment.to,
             amount: payment.amount.toString(),
-            currency: payment.currency || '0x0000000000000000000000000000000000000000',
+            currency:
+              payment.currency || '0x0000000000000000000000000000000000000000',
           });
         })
       );
@@ -325,7 +343,10 @@ class NonCustodialWallet {
     privateKey: `0x${string}`;
     walletId?: string;
   }): NonCustodialWallet {
-    return new NonCustodialWallet(exportedData.privateKey, exportedData.walletId);
+    return new NonCustodialWallet(
+      exportedData.privateKey,
+      exportedData.walletId
+    );
   }
 }
 

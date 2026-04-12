@@ -91,7 +91,7 @@ async function runTest() {
   console.log('- ✓ Cleanup of expired entries');
 }
 
-runTest().catch(error => {
+runTest().catch((error) => {
   console.error('❌ Test failed:', error);
   process.exit(1);
 });

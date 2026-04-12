@@ -3,7 +3,9 @@ import SecurityManager from './securityManager.js';
 // 示例：整合安全组件
 async function securitySystemIntegration() {
   // 初始化安全管理器
-  const securityManager = new SecurityManager('0x1234567890123456789012345678901234567890');
+  const securityManager = new SecurityManager(
+    '0x1234567890123456789012345678901234567890'
+  );
   await securityManager.initialize();
 
   // 1. 创建安全策略
@@ -18,7 +20,7 @@ async function securitySystemIntegration() {
         operator: 'gt',
         value: 1000,
         action: 'deny',
-        priority: 10
+        priority: 10,
       },
       {
         id: 'rule-2',
@@ -26,7 +28,7 @@ async function securitySystemIntegration() {
         operator: 'gt',
         value: 500,
         action: 'require_approval',
-        priority: 9
+        priority: 9,
       },
       {
         id: 'rule-3',
@@ -34,7 +36,7 @@ async function securitySystemIntegration() {
         operator: 'in',
         value: ['high_risk'],
         action: 'require_approval',
-        priority: 8
+        priority: 8,
       },
       {
         id: 'rule-4',
@@ -42,8 +44,8 @@ async function securitySystemIntegration() {
         operator: 'gt',
         value: 0,
         action: 'allow',
-        priority: 1
-      }
+        priority: 1,
+      },
     ],
     undefined, // 无父策略
     ['default', 'basic'] // 标签
@@ -60,7 +62,7 @@ async function securitySystemIntegration() {
       daily: 80,
       weekly: 80,
       monthly: 80,
-      yearly: 80
+      yearly: 80,
     }
   );
 
@@ -72,7 +74,7 @@ async function securitySystemIntegration() {
     'recipients',
     [
       '0x1111111111111111111111111111111111111111',
-      '0x2222222222222222222222222222222222222222'
+      '0x2222222222222222222222222222222222222222',
     ],
     10, // 高优先级
     Date.now() + 30 * 24 * 60 * 60 * 1000 // 30天后过期

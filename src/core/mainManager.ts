@@ -120,7 +120,9 @@ class MainManager {
   }
 
   // 创建默认策略模板
-  async createTemplatePolicy(templateType: 'default' | 'strict' | 'permissive'): Promise<any> {
+  async createTemplatePolicy(
+    templateType: 'default' | 'strict' | 'permissive'
+  ): Promise<any> {
     return this.securityManager.createTemplatePolicy(templateType);
   }
 

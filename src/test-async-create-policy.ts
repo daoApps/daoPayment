@@ -42,7 +42,9 @@ async function testAsyncCreatePolicy() {
     const loadedPolicy = policyManager.getPolicy(policyId);
 
     if (loadedPolicy) {
-      console.log(`✓ Policy found in memory: ${loadedPolicy.name} (${loadedPolicy.id})`);
+      console.log(
+        `✓ Policy found in memory: ${loadedPolicy.name} (${loadedPolicy.id})`
+      );
       console.log(`✓ Number of rules: ${loadedPolicy.rules.length}`);
     } else {
       throw new Error('Policy not found in memory after creation');
