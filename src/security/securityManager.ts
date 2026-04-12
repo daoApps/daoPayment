@@ -13,18 +13,22 @@ class SecurityManager {
     this.whitelistManager = new WhitelistManager(contractAddress);
   }
 
+  async initialize(): Promise<void> {
+    await this.policyManager.initialize();
+  }
+
   // 策略管理
-  createPolicy(
+  async createPolicy(
     policyId: string,
     name: string,
     description: string,
     rules: any[]
-  ): void {
-    this.policyManager.createPolicy(policyId, name, description, rules);
+  ): Promise<void> {
+    await this.policyManager.createPolicy(policyId, name, description, rules);
   }
 
   // 创建默认策略模板
-  createTemplatePolicy(templateType: 'default' | 'strict' | 'permissive'): any {
+  async createTemplatePolicy(templateType: 'default' | 'strict' | 'permissive'): Promise<any> {
     return this.policyManager.createTemplatePolicy(templateType);
   }
 

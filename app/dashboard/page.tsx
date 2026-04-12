@@ -19,7 +19,7 @@ const DEFAULT_WHITELIST_ID: `0x${string}` =
   '0x0000000000000000000000000000000000000000000000000000000000000001';
 
 export default function DashboardPage() {
-  const [_selectedWallet, _setSelectedWallet] =
+  const [selectedWallet, setSelectedWallet] =
     useState<`0x${string}`>(DEFAULT_WALLET);
 
   const {

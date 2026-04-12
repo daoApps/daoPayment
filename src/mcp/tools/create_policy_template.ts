@@ -27,7 +27,7 @@ class CreatePolicyTemplateTool implements ITool<Input, Output> {
 
   async execute(input: Input): Promise<Output> {
     try {
-      const policy = manager.createTemplatePolicy(input.templateType);
+      const policy = await manager.createTemplatePolicy(input.templateType);
       return {
         success: true,
         policy: {

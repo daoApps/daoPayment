@@ -178,9 +178,9 @@ program
       .argument('<id>', 'Policy ID')
       .argument('<name>', 'Policy name')
       .argument('<description>', 'Policy description')
-      .action((_id: string, _name: string, _description: string) => {
+      .action(async (_id: string, _name: string, _description: string) => {
         // 创建默认策略
-        const policy = manager
+        const policy = await manager
           .getSecurityManager()
           .createTemplatePolicy('default');
         console.log(`Created policy: ${policy.name}`);

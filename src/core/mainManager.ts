@@ -36,6 +36,10 @@ class MainManager {
     );
   }
 
+  async initialize(): Promise<void> {
+    await this.securityManager.initialize();
+  }
+
   // 钱包管理
   createWallet(): string {
     const wallet = this.walletManager.createWallet();
@@ -106,17 +110,17 @@ class MainManager {
   }
 
   // 安全管理
-  createPolicy(
+  async createPolicy(
     policyId: string,
     name: string,
     description: string,
     rules: any[]
-  ): void {
-    this.securityManager.createPolicy(policyId, name, description, rules);
+  ): Promise<void> {
+    await this.securityManager.createPolicy(policyId, name, description, rules);
   }
 
   // 创建默认策略模板
-  createTemplatePolicy(templateType: 'default' | 'strict' | 'permissive'): any {
+  async createTemplatePolicy(templateType: 'default' | 'strict' | 'permissive'): Promise<any> {
     return this.securityManager.createTemplatePolicy(templateType);
   }
 

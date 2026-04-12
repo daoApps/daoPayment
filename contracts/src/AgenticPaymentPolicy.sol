@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.28;
+pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -54,7 +54,7 @@ contract AgenticPaymentPolicy is Ownable {
     event RecipientAdded(bytes32 indexed whitelistId, address recipient);
     event RecipientRemoved(bytes32 indexed whitelistId, address recipient);
 
-    constructor() Ownable(msg.sender) {}
+    constructor() Ownable() {}
 
     /**
      * @dev Set a complete policy

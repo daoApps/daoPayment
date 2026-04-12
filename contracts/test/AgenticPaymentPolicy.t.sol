@@ -62,7 +62,6 @@ contract AgenticPaymentPolicyTest is Test {
         policy.setBudget(TEST_WALLET, 1000 ether, 7000 ether);
         policy.recordSpend(TEST_WALLET, 500 ether);
         
-        uint256 timestampBefore = block.timestamp;
         vm.warp(block.timestamp + 3600);
         policy.resetDailySpend(TEST_WALLET);
         

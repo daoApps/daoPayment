@@ -1,7 +1,7 @@
-- [ ] Foundry installer successfully downloaded and executed
-- [ ] Foundry binaries installed correctly (forge, cast, anvil)
-- [ ] Foundry is added to system PATH environment variable
-- [ ] forge --version command runs successfully and outputs version
-- [ ] cast --version command runs successfully and outputs version
-- [ ] anvil --version command runs successfully and outputs version
-- [ ] Foundry tools are accessible from any directory
+- [x] Foundry installer successfully downloaded and executed
+- [x] Foundry binaries installed correctly (forge, cast, anvil)
+- [x] Foundry is added to system PATH environment variable
+- [x] forge --version command runs successfully and outputs version
+- [x] cast --version command runs successfully and outputs version
+- [x] anvil --version command runs successfully and outputs version
+- [x] Foundry tools are accessible from any directory

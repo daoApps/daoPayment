@@ -8,12 +8,16 @@ class EnhancedPolicyManager {
   constructor(storagePath: string = './policies') {
     this.policyEngine = new PolicyEngine();
     this.policyStorage = new PolicyStorage(storagePath);
-    this.loadPolicies();
+  }
+
+  async initialize(): Promise<void> {
+    await this.policyStorage.initialize();
+    await this.loadPolicies();
   }
 
   // 加载所有策略
-  private loadPolicies(): void {
-    const policies = this.policyStorage.loadAllPolicies();
+  private async loadPolicies(): Promise<void> {
+    const policies = await this.policyStorage.loadAllPolicies();
     for (const policy of policies) {
       this.policyEngine.createPolicy(
         policy.id,
@@ -25,31 +29,31 @@ class EnhancedPolicyManager {
   }
 
   // 创建策略
-  createPolicy(
+  async createPolicy(
     id: string,
     name: string,
     description: string,
     rules: PolicyRule[]
-  ): Policy {
+  ): Promise<Policy> {
     const policy = this.policyEngine.createPolicy(id, name, description, rules);
-    this.policyStorage.savePolicy(policy);
+    await this.policyStorage.savePolicy(policy);
     return policy;
   }
 
   // 更新策略
-  updatePolicy(id: string, updates: Partial<Policy>): Policy | null {
+  async updatePolicy(id: string, updates: Partial<Policy>): Promise<Policy | null> {
     const policy = this.policyEngine.updatePolicy(id, updates);
     if (policy) {
-      this.policyStorage.savePolicy(policy);
+      await this.policyStorage.savePolicy(policy);
     }
     return policy;
   }
 
   // 删除策略
-  deletePolicy(id: string): boolean {
+  async deletePolicy(id: string): Promise<boolean> {
     const result = this.policyEngine.deletePolicy(id);
     if (result) {
-      this.policyStorage.deletePolicy(id);
+      await this.policyStorage.deletePolicy(id);
     }
     return result;
   }
@@ -75,9 +79,9 @@ class EnhancedPolicyManager {
   }
 
   // 创建常用策略模板
-  createTemplatePolicy(
+  async createTemplatePolicy(
     templateType: 'default' | 'strict' | 'permissive'
-  ): Policy {
+  ): Promise<Policy> {
     const id = `template-${templateType}-${Date.now()}`;
     let name: string;
     let description: string;
