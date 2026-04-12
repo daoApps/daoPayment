@@ -7,7 +7,9 @@ interface PolicyRule {
     | 'token'
     | 'method'
     | 'time'
-    | 'whitelist';
+    | 'whitelist'
+    | 'token_type'
+    | 'transaction_count';
   operator: 'eq' | 'ne' | 'gt' | 'lt' | 'gte' | 'lte' | 'in' | 'not_in';
   value: any;
   action: 'allow' | 'deny' | 'require_approval';
@@ -21,6 +23,9 @@ interface Policy {
   rules: PolicyRule[];
   createdAt: number;
   updatedAt: number;
+  version: number;
+  parentId?: string;
+  tags?: string[];
 }
 
 class PolicyEngine {
@@ -31,7 +36,9 @@ class PolicyEngine {
     id: string,
     name: string,
     description: string,
-    rules: PolicyRule[]
+    rules: PolicyRule[],
+    parentId?: string,
+    tags?: string[]
   ): Policy {
     const policy: Policy = {
       id,
@@ -40,9 +47,102 @@ class PolicyEngine {
       rules: rules.sort((a, b) => b.priority - a.priority), // 按优先级排序
       createdAt: Date.now(),
       updatedAt: Date.now(),
+      version: 1,
+      parentId,
+      tags,
     };
 
     this.policies.set(id, policy);
+    return policy;
+  }
+
+  // 从父策略创建策略（继承）
+  createPolicyFromParent(
+    id: string,
+    name: string,
+    description: string,
+    parentId: string,
+    additionalRules: PolicyRule[] = [],
+    tags?: string[]
+  ): Policy | null {
+    const parentPolicy = this.policies.get(parentId);
+    if (!parentPolicy) {
+      return null;
+    }
+
+    // 继承父策略的规则
+    const inheritedRules = [...parentPolicy.rules];
+    // 添加新规则
+    const allRules = [...inheritedRules, ...additionalRules];
+
+    const policy: Policy = {
+      id,
+      name,
+      description,
+      rules: allRules.sort((a, b) => b.priority - a.priority),
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      version: 1,
+      parentId,
+      tags,
+    };
+
+    this.policies.set(id, policy);
+    return policy;
+  }
+
+  // 版本控制：创建策略的新版本
+  createPolicyVersion(
+    policyId: string,
+    name: string,
+    description: string,
+    updatedRules: PolicyRule[]
+  ): Policy | null {
+    const existingPolicy = this.policies.get(policyId);
+    if (!existingPolicy) {
+      return null;
+    }
+
+    const newVersionId = `${policyId}-v${existingPolicy.version + 1}`;
+    const policy: Policy = {
+      id: newVersionId,
+      name,
+      description,
+      rules: updatedRules.sort((a, b) => b.priority - a.priority),
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      version: existingPolicy.version + 1,
+      parentId: existingPolicy.parentId,
+      tags: existingPolicy.tags,
+    };
+
+    this.policies.set(newVersionId, policy);
+    return policy;
+  }
+
+  // 导出策略
+  exportPolicy(policyId: string): Policy | null {
+    return this.policies.get(policyId) || null;
+  }
+
+  // 导入策略
+  importPolicy(policy: Policy): Policy {
+    // 确保策略有唯一ID
+    if (!this.policies.has(policy.id)) {
+      this.policies.set(policy.id, policy);
+    } else {
+      // 如果策略已存在，创建新版本
+      const existingPolicy = this.policies.get(policy.id)!;
+      const newVersionId = `${policy.id}-v${existingPolicy.version + 1}`;
+      const newPolicy = {
+        ...policy,
+        id: newVersionId,
+        version: existingPolicy.version + 1,
+        updatedAt: Date.now(),
+      };
+      this.policies.set(newVersionId, newPolicy);
+      return newPolicy;
+    }
     return policy;
   }
 
@@ -57,6 +157,7 @@ class PolicyEngine {
       ...policy,
       ...updates,
       updatedAt: Date.now(),
+      version: policy.version + 1, // 每次更新增加版本号
     };
 
     if (updates.rules) {
@@ -67,6 +168,20 @@ class PolicyEngine {
 
     this.policies.set(id, updatedPolicy);
     return updatedPolicy;
+  }
+
+  // 按标签搜索策略
+  searchPoliciesByTag(tag: string): Policy[] {
+    return Array.from(this.policies.values()).filter(policy => 
+      policy.tags && policy.tags.includes(tag)
+    );
+  }
+
+  // 获取策略的所有版本
+  getPolicyVersions(policyBaseId: string): Policy[] {
+    return Array.from(this.policies.values()).filter(policy => 
+      policy.id === policyBaseId || policy.id.startsWith(`${policyBaseId}-v`)
+    );
   }
 
   // 删除策略

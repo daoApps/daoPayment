@@ -15,7 +15,8 @@
     "typecheck": "tsc --noEmit",
     "vite:dev": "vite",
     "vite:build": "vite build",
-    "vite:preview": "vite preview"
+    "vite:preview": "vite preview",
+    "build:cross-platform": "npm run build:lib && next build"
   },
   "keywords": [
     "monad",

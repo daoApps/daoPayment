@@ -33,11 +33,65 @@ class EnhancedPolicyManager {
     id: string,
     name: string,
     description: string,
-    rules: PolicyRule[]
+    rules: PolicyRule[],
+    parentId?: string,
+    tags?: string[]
   ): Promise<Policy> {
-    const policy = this.policyEngine.createPolicy(id, name, description, rules);
+    const policy = this.policyEngine.createPolicy(id, name, description, rules, parentId, tags);
     await this.policyStorage.savePolicy(policy);
     return policy;
+  }
+
+  // 从父策略创建策略（继承）
+  async createPolicyFromParent(
+    id: string,
+    name: string,
+    description: string,
+    parentId: string,
+    additionalRules: PolicyRule[] = [],
+    tags?: string[]
+  ): Promise<Policy | null> {
+    const policy = this.policyEngine.createPolicyFromParent(id, name, description, parentId, additionalRules, tags);
+    if (policy) {
+      await this.policyStorage.savePolicy(policy);
+    }
+    return policy;
+  }
+
+  // 版本控制：创建策略的新版本
+  async createPolicyVersion(
+    policyId: string,
+    name: string,
+    description: string,
+    updatedRules: PolicyRule[]
+  ): Promise<Policy | null> {
+    const policy = this.policyEngine.createPolicyVersion(policyId, name, description, updatedRules);
+    if (policy) {
+      await this.policyStorage.savePolicy(policy);
+    }
+    return policy;
+  }
+
+  // 导出策略
+  exportPolicy(policyId: string): Policy | null {
+    return this.policyEngine.exportPolicy(policyId);
+  }
+
+  // 导入策略
+  async importPolicy(policy: Policy): Promise<Policy> {
+    const importedPolicy = this.policyEngine.importPolicy(policy);
+    await this.policyStorage.savePolicy(importedPolicy);
+    return importedPolicy;
+  }
+
+  // 按标签搜索策略
+  searchPoliciesByTag(tag: string): Policy[] {
+    return this.policyEngine.searchPoliciesByTag(tag);
+  }
+
+  // 获取策略的所有版本
+  getPolicyVersions(policyBaseId: string): Policy[] {
+    return this.policyEngine.getPolicyVersions(policyBaseId);
   }
 
   // 更新策略
