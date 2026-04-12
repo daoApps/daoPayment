@@ -41,7 +41,7 @@ class CreatePolicyTool implements ITool<Input, Output> {
 
   async execute(input: Input): Promise<Output> {
     try {
-      manager
+      await manager
         .getSecurityManager()
         .createPolicy(
           input.policyId,

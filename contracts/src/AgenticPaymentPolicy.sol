@@ -25,6 +25,7 @@ contract AgenticPaymentPolicy is Ownable {
         uint256 spentToday;
         uint256 spentThisWeek;
         uint256 lastUpdateTimestamp;
+        uint256 lastDailyResetTimestamp;
     }
 
     struct Whitelist {
@@ -130,6 +131,7 @@ contract AgenticPaymentPolicy is Ownable {
         budget.spentToday = 0;
         budget.spentThisWeek = 0;
         budget.lastUpdateTimestamp = block.timestamp;
+        budget.lastDailyResetTimestamp = block.timestamp;
         emit BudgetUpdated(wallet);
     }
 
@@ -156,6 +158,10 @@ contract AgenticPaymentPolicy is Ownable {
      */
     function recordSpend(address wallet, uint256 amount) external onlyOwner {
         Budget storage budget = budgets[wallet];
+        if (block.timestamp >= budget.lastDailyResetTimestamp + 86400) {
+            budget.spentToday = 0;
+            budget.lastDailyResetTimestamp = block.timestamp;
+        }
         unchecked {
             budget.spentToday += amount;
             budget.spentThisWeek += amount;
@@ -168,6 +174,7 @@ contract AgenticPaymentPolicy is Ownable {
      */
     function resetDailySpend(address wallet) external onlyOwner {
         budgets[wallet].spentToday = 0;
+        budgets[wallet].lastDailyResetTimestamp = block.timestamp;
         emit BudgetUpdated(wallet);
     }
 

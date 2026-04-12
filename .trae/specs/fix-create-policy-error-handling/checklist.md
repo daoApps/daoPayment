@@ -1,0 +1,5 @@
+- [x] Issue verified: `createPolicy` call is missing `await` keyword ✓
+- [x] `await` keyword added to `createPolicy` asynchronous call ✓
+- [x] Code compiles without TypeScript errors ✓
+- [x] Errors from `createPolicy` are correctly caught by try-catch ✓
+- [x] Function returns only after asynchronous operation completes ✓
