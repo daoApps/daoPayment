@@ -22,9 +22,11 @@ class SecurityManager {
     policyId: string,
     name: string,
     description: string,
-    rules: any[]
+    rules: any[],
+    parentId?: string,
+    tags?: string[]
   ): Promise<void> {
-    await this.policyManager.createPolicy(policyId, name, description, rules);
+    await this.policyManager.createPolicy(policyId, name, description, rules, parentId, tags);
   }
 
   // 创建默认策略模板
