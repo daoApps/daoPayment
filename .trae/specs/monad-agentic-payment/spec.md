@@ -11,28 +11,36 @@
 - 提供细粒度的安全配置和权限管理
 - 实现可审计、可追溯的支付记录
 - 支持跨平台部署和多 Agent 集成
+- 支持智能合约层的安全策略执行
+- 实现人机协同审批流程
+- 支持 x402 机器可支付 API 集成
 
 ## Non-Goals (Out of Scope)
 - 中心化托管服务
 - 非 Monad 链的支付支持
 - 传统人工操作的钱包功能
 - 非 Agent 环境的使用场景
+- 非 ERC-4337 标准的钱包实现
 
 ## Background & Context
 - 普通钱包假设操作者是人，需要人工持有私钥和发起交易
 - AI Agent 需要自主行动但不能失控
 - Monad 链提供了 MPP (Monad Pay Protocol) 作为支付基础设施
 - x402 协议为 machine-payable API 提供标准
+- ERC-4337 账户抽象标准为 Agent 操作提供基础
 
 ## Functional Requirements
-- **FR-1**: 去中心化钱包基础设施 - 用户自持资产，非托管，Agent 无法接触真实私钥
-- **FR-2**: 安全配置系统 - 支持单笔上限、预算控制、白名单、方法级限制、超阈值确认
-- **FR-3**: Agent 原生接口 - 为 Agent 设计的权限请求、临时授权、支付执行、失败处理
-- **FR-4**: 审计与可解释系统 - 完整的支付记录，包括触发者、上下文、原因、策略命中
+- **FR-1**: 去中心化钱包基础设施 - 基于 ERC-4337，用户自持资产，非托管，Agent 无法接触真实私钥
+- **FR-2**: 安全配置系统 - 支持单笔上限、每日/每周预算、白名单（地址/合约/Token）、方法级限制、超阈值人工确认、风险拦截、紧急暂停
+- **FR-3**: Agent 原生接口 - 为 Agent 设计的权限请求、临时授权、支付执行、失败处理、任务上下文关联
+- **FR-4**: 审计与可解释系统 - 完整的支付记录，包括触发者、任务上下文、收款方、支付原因、命中策略、审批状态、执行结果
 - **FR-5**: 恢复与权限管理 - 钱包恢复、权限调整、Session Key 轮换、多 Agent 差异化权限
-- **FR-6**: 加分特性 A - Session Key / Delegated Key 支持
-- **FR-7**: 加分特性 B - Policy Engine 可配置策略层
-- **FR-8**: 加分特性 F - 结构化审计日志 / Payment Receipt
+- **FR-6**: 智能合约层 - AgentWallet、SessionKeyManager、PolicyRegistry 实现
+- **FR-7**: Agent SDK - 核心支付 API、授权管理、策略客户端
+- **FR-8**: MCP Server - 将 Agent SDK 封装为 MCP 工具，支持 Claude、OpenClaw、Codex 等 AI Agent 环境
+- **FR-9**: 前端仪表盘 - 钱包管理、审批门户、审计查看器
+- **FR-10**: 人机协同审批流程 - 分级审批模型，支持自动、确认、人工三级审批
+- **FR-11**: 高级特性 - 钱包恢复机制、多 Agent 差异化权限、x402 机器可支付 API 集成、Passkey/WebAuthn 登录
 
 ## Non-Functional Requirements
 - **NFR-1**: 跨平台兼容性 - 支持 Mac/Linux/Windows, AMD/Intel/Apple M
@@ -40,16 +48,19 @@
 - **NFR-3**: 可集成性 - 可作为 MCP Server / CLI Tool / SDK 集成到 AI Agent 环境
 - **NFR-4**: 性能 - 支付执行响应时间 < 5 秒
 - **NFR-5**: 可扩展性 - 支持多 Agent 并发操作
+- **NFR-6**: 可审计性 - 完整的支付记录和策略执行日志
+- **NFR-7**: 安全性 - 链上策略强制执行，非仅咨询性质
 
 ## Constraints
-- **Technical**: 基于 Monad 链，使用 MPP 协议，TypeScript 开发
-- **Business**: 开源项目，符合赛题要求
-- **Dependencies**: MonSkill, MPP TS SDK, x402 协议
+- **Technical**: 基于 Monad 链，使用 MPP 协议，TypeScript 开发，Solidity 智能合约
+- **Business**: 开源项目，符合赛题要求，黑客松时间限制
+- **Dependencies**: MonSkill, MPP TS SDK, x402 协议, viem, wagmi, Next.js, Tailwind CSS
 
 ## Assumptions
 - 用户已安装 MonSkill 开发环境
 - Monad 测试网可正常访问
 - Agent 环境支持 MCP 或类似集成方式
+- 智能合约可成功部署到 Monad 测试网
 
 ## Acceptance Criteria
 
@@ -116,7 +127,30 @@
 - **Verification**: `human-judgment`
 - **Notes**: 测试与 Claude Code / OpenClaw 等环境集成
 
+### AC-10: 智能合约部署
+- **Given**: 智能合约代码完成
+- **When**: 部署到 Monad 测试网
+- **Then**: 合约成功部署，功能正常
+- **Verification**: `programmatic`
+- **Notes**: 测试合约部署和基本功能
+
+### AC-11: 前端仪表盘功能
+- **Given**: 前端代码完成
+- **When**: 用户访问仪表盘
+- **Then**: 可查看余额、管理权限、配置策略、查看审计记录
+- **Verification**: `human-judgment`
+- **Notes**: 测试前端界面和功能
+
+### AC-12: 人机协同审批
+- **Given**: Agent 发起超阈值支付
+- **When**: 系统触发审批流程
+- **Then**: 用户收到通知，可一键同意/拒绝
+- **Verification**: `programmatic`
+- **Notes**: 测试审批流程和通知机制
+
 ## Open Questions
 - [ ] 具体的 MPP 协议集成细节需要进一步确认
 - [ ] Session Key 的具体实现方案需要根据 Monad 链特性确定
 - [ ] 跨平台部署的具体技术方案需要验证
+- [ ] 智能合约的具体安全审计方案需要确定
+- [ ] 前端仪表盘的具体 UI/UX 设计需要细化
