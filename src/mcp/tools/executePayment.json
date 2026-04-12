@@ -1,0 +1,45 @@
+{
+  "name": "executePayment",
+  "description": "Execute a payment from a wallet",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "agentId": {
+        "type": "string",
+        "description": "The agent ID initiating the payment"
+      },
+      "walletAddress": {
+        "type": "string",
+        "description": "The wallet address to send from"
+      },
+      "recipient": {
+        "type": "string",
+        "description": "The recipient wallet address"
+      },
+      "amount": {
+        "type": "number",
+        "description": "The amount to send"
+      },
+      "token": {
+        "type": "string",
+        "description": "The token type",
+        "default": "USDC"
+      },
+      "category": {
+        "type": "string",
+        "description": "The payment category",
+        "default": "general"
+      },
+      "purpose": {
+        "type": "string",
+        "description": "The payment purpose",
+        "default": "Agent payment"
+      },
+      "permissionId": {
+        "type": "string",
+        "description": "The permission ID for this payment"
+      }
+    }
+  },
+  "required": ["agentId", "walletAddress", "recipient", "amount", "permissionId"]
+}

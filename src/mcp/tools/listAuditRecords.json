@@ -1,0 +1,31 @@
+{
+  "name": "listAuditRecords",
+  "description": "List audit records with optional filters",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "agentId": {
+        "type": "string",
+        "description": "Filter by agent ID"
+      },
+      "walletAddress": {
+        "type": "string",
+        "description": "Filter by wallet address"
+      },
+      "status": {
+        "type": "string",
+        "description": "Filter by status",
+        "enum": ["pending", "completed", "failed"]
+      },
+      "startTime": {
+        "type": "number",
+        "description": "Filter by start time timestamp"
+      },
+      "endTime": {
+        "type": "number",
+        "description": "Filter by end time timestamp"
+      }
+    }
+  },
+  "required": []
+}

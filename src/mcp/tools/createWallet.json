@@ -1,0 +1,9 @@
+{
+  "name": "createWallet",
+  "description": "Create a new wallet and generate a recovery seed",
+  "parameters": {
+    "type": "object",
+    "properties": {}
+  },
+  "required": []
+}

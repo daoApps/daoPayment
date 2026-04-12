@@ -1,0 +1,41 @@
+{
+  "name": "generateSessionKey",
+  "description": "Generate a session key for an agent",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "agentId": {
+        "type": "string",
+        "description": "The agent ID"
+      },
+      "walletAddress": {
+        "type": "string",
+        "description": "The wallet address"
+      },
+      "permissions": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "The permissions for the session key",
+        "default": ["transfer"]
+      },
+      "expiration": {
+        "type": "number",
+        "description": "The expiration time in milliseconds",
+        "default": 86400000
+      },
+      "maxAmount": {
+        "type": "number",
+        "description": "The maximum amount per transaction",
+        "default": 5
+      },
+      "dailyLimit": {
+        "type": "number",
+        "description": "The daily limit",
+        "default": 20
+      }
+    }
+  },
+  "required": ["agentId", "walletAddress"]
+}

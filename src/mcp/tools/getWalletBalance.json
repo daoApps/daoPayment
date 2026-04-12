@@ -1,0 +1,14 @@
+{
+  "name": "getWalletBalance",
+  "description": "Get the balance of a wallet",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "walletAddress": {
+        "type": "string",
+        "description": "The wallet address to check balance for"
+      }
+    }
+  },
+  "required": ["walletAddress"]
+}
