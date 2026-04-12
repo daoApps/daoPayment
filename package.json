@@ -5,12 +5,14 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "npm run build:lib && next build",
+    "build:lib": "tsc -p tsconfig.cli.json",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
     "vite:dev": "vite",
     "vite:build": "vite build",
     "vite:preview": "vite preview"
@@ -43,7 +45,9 @@
     "vite": "^8.0.8"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "@monad-crypto/mpp": "github:monad-crypto/monad-ts#main",
+    "@tanstack/react-query": "^5.99.0",
     "@types/react": "^19.2.14",
     "@wagmi/connectors": "^8.0.1",
     "@wagmi/core": "^3.4.2",

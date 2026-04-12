@@ -23,7 +23,10 @@ class WalletManager {
           const wallet = Wallet.loadFromFile(walletPath);
           this.wallets.set(wallet.getAddress(), wallet);
         } catch (error) {
-          console.error(`Error loading wallet from ${file}:`, error);
+          console.error(
+            `Skipping corrupted wallet file ${file}:`,
+            (error as Error).message
+          );
         }
       }
     }

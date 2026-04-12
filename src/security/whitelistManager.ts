@@ -1,122 +1,129 @@
-import * as fs from 'fs';
-import * as path from 'path';
+import { createPublicClient, http } from 'viem';
+import { AgenticPaymentPolicyAbi } from '../abis/AgenticPaymentPolicy.js';
 
-interface Whitelist {
-  recipients: string[];
-  tokens: string[];
-  categories: string[];
-  methods: string[];
-}
+const MONAD_TESTNET_RPC = 'https://testnet-rpc.monad.xyz';
+const MONAD_CHAIN_ID = 10143;
 
-class WhitelistManager {
-  private whitelists: Map<string, Whitelist> = new Map();
-  private storagePath: string;
-
-  constructor(storagePath: string = './whitelists') {
-    this.storagePath = storagePath;
-    if (!fs.existsSync(this.storagePath)) {
-      fs.mkdirSync(this.storagePath, { recursive: true });
+export class WhitelistManager {
+  private contractAddress: `0x${string}`;
+  private cache: Map<
+    string,
+    {
+      recipients: `0x${string}`[];
+      timestamp: number;
     }
-    this.loadWhitelists();
+  > = new Map();
+  private CACHE_TTL = 60 * 1000; // 1 minute cache
+  private localWhitelistCache: Map<string, Set<string>> = new Map();
+
+  constructor(contractAddress: `0x${string}`) {
+    this.contractAddress = contractAddress;
   }
 
-  private loadWhitelists(): void {
-    const files = fs.readdirSync(this.storagePath);
-    for (const file of files) {
-      if (file.endsWith('.json')) {
-        const whitelistPath = path.join(this.storagePath, file);
-        try {
-          const whitelist = JSON.parse(fs.readFileSync(whitelistPath, 'utf8'));
-          const whitelistId = path.basename(file, '.json');
-          this.whitelists.set(whitelistId, whitelist);
-        } catch (error) {
-          console.error(`Error loading whitelist from ${file}:`, error);
-        }
-      }
+  private getClient() {
+    return createPublicClient({
+      transport: http(MONAD_TESTNET_RPC),
+      chain: {
+        id: MONAD_CHAIN_ID,
+        name: 'Monad Testnet',
+        nativeCurrency: {
+          name: 'MON',
+          symbol: 'MON',
+          decimals: 18,
+        },
+        rpcUrls: {
+          default: { http: [MONAD_TESTNET_RPC] },
+        },
+      },
+    });
+  }
+
+  async isRecipientAllowed(
+    whitelistId: `0x${string}`,
+    recipient: `0x${string}`
+  ): Promise<boolean> {
+    const client = this.getClient();
+
+    try {
+      const result = await client.readContract({
+        address: this.contractAddress,
+        abi: AgenticPaymentPolicyAbi,
+        functionName: 'isRecipientAllowed',
+        args: [whitelistId, recipient],
+      });
+      return result as boolean;
+    } catch (error) {
+      console.error('Failed to check whitelist on-chain:', error);
+      return false;
     }
   }
 
-  private saveWhitelist(whitelistId: string, whitelist: Whitelist): void {
-    const whitelistPath = path.join(this.storagePath, `${whitelistId}.json`);
-    fs.writeFileSync(whitelistPath, JSON.stringify(whitelist, null, 2));
+  async getWhitelistRecipients(
+    whitelistId: `0x${string}`
+  ): Promise<`0x${string}`[]> {
+    const cached = this.cache.get(whitelistId);
+    if (cached && Date.now() - cached.timestamp < this.CACHE_TTL) {
+      return cached.recipients;
+    }
+
+    const client = this.getClient();
+
+    try {
+      const result = await client.readContract({
+        address: this.contractAddress,
+        abi: AgenticPaymentPolicyAbi,
+        functionName: 'getWhitelistRecipients',
+        args: [whitelistId],
+      });
+      const recipients = result as `0x${string}`[];
+
+      this.cache.set(whitelistId, {
+        recipients,
+        timestamp: Date.now(),
+      });
+
+      return recipients;
+    } catch (error) {
+      console.error('Failed to get whitelist recipients from chain:', error);
+      return [];
+    }
+  }
+
+  invalidateCache(whitelistId: string): void {
+    this.cache.delete(whitelistId);
   }
 
   createWhitelist(
     whitelistId: string,
-    recipients: string[] = [],
-    tokens: string[] = [],
-    categories: string[] = [],
-    methods: string[] = []
+    recipients: string[],
+    _tokens: string[],
+    _categories: string[],
+    _methods: string[]
   ): void {
-    const whitelist: Whitelist = {
-      recipients,
-      tokens,
-      categories,
-      methods,
-    };
-    this.whitelists.set(whitelistId, whitelist);
-    this.saveWhitelist(whitelistId, whitelist);
+    this.localWhitelistCache.set(whitelistId, new Set(recipients));
   }
 
   addToWhitelist(
     whitelistId: string,
-    type: keyof Whitelist,
+    _type: 'recipients' | 'tokens' | 'categories' | 'methods',
     items: string[]
   ): boolean {
-    const whitelist = this.whitelists.get(whitelistId);
+    const whitelist = this.localWhitelistCache.get(whitelistId);
     if (!whitelist) {
       return false;
     }
-
-    const existingItems = whitelist[type];
-    const newItems = items.filter((item) => !existingItems.includes(item));
-    whitelist[type] = [...existingItems, ...newItems];
-    this.saveWhitelist(whitelistId, whitelist);
+    for (const item of items) {
+      whitelist.add(item);
+    }
     return true;
   }
 
-  removeFromWhitelist(
-    whitelistId: string,
-    type: keyof Whitelist,
-    items: string[]
-  ): boolean {
-    const whitelist = this.whitelists.get(whitelistId);
+  isLocallyAllowed(whitelistId: string, recipient: string): boolean {
+    const whitelist = this.localWhitelistCache.get(whitelistId);
     if (!whitelist) {
-      return false;
+      return true;
     }
-
-    whitelist[type] = whitelist[type].filter((item) => !items.includes(item));
-    this.saveWhitelist(whitelistId, whitelist);
-    return true;
-  }
-
-  checkWhitelist(
-    whitelistId: string,
-    type: keyof Whitelist,
-    item: string
-  ): boolean {
-    const whitelist = this.whitelists.get(whitelistId);
-    if (!whitelist) {
-      return false;
-    }
-    return whitelist[type].includes(item);
-  }
-
-  getWhitelist(whitelistId: string): Whitelist | undefined {
-    return this.whitelists.get(whitelistId);
-  }
-
-  deleteWhitelist(whitelistId: string): boolean {
-    const whitelistPath = path.join(this.storagePath, `${whitelistId}.json`);
-    if (fs.existsSync(whitelistPath)) {
-      fs.unlinkSync(whitelistPath);
-      return this.whitelists.delete(whitelistId);
-    }
-    return false;
-  }
-
-  listWhitelists(): string[] {
-    return Array.from(this.whitelists.keys());
+    return whitelist.has(recipient);
   }
 }
 

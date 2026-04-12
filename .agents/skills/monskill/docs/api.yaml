@@ -34,7 +34,7 @@ paths:
               - wallet-integration
               - vercel-deploy
       responses:
-        "200":
+        '200':
           description: Skill markdown content
           headers:
             Content-Type:
@@ -44,7 +44,7 @@ paths:
             Access-Control-Allow-Origin:
               schema:
                 type: string
-                example: "*"
+                example: '*'
             Cache-Control:
               schema:
                 type: string
@@ -60,7 +60,7 @@ paths:
                   ---
                   # Scaffold
                   ...
-        "404":
+        '404':
           description: Skill not found
           content:
             text/plain:
@@ -82,7 +82,7 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Analytics data
           content:
             application/json:
@@ -122,11 +122,11 @@ paths:
                         date:
                           type: string
                           format: date
-                          example: "2026-03-18"
+                          example: '2026-03-18'
                         downloads:
                           type: integer
                           example: 12
-        "401":
+        '401':
           description: Unauthorized — missing or incorrect key
           content:
             application/json:
@@ -136,7 +136,7 @@ paths:
                   error:
                     type: string
                     example: Unauthorized
-        "500":
+        '500':
           description: Server error — DATABASE_URL not configured
           content:
             application/json:
@@ -167,7 +167,7 @@ paths:
               - wallet-integration
               - vercel-deploy
       responses:
-        "200":
+        '200':
           description: Skill markdown content (same as /api/skill)
           content:
             text/markdown:
@@ -194,7 +194,7 @@ paths:
               - wallet-integration
               - vercel-deploy
       responses:
-        "200":
+        '200':
           description: Skill markdown content (same as /api/skill)
           content:
             text/markdown:
@@ -208,7 +208,7 @@ paths:
         Returns the master SKILL.md index file.
         Tracked as skill name "monskill".
       responses:
-        "200":
+        '200':
           description: Master skill index markdown
           content:
             text/markdown:

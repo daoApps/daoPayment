@@ -7,10 +7,10 @@ class SecurityManager {
   private budgetManager: BudgetManager;
   private whitelistManager: WhitelistManager;
 
-  constructor() {
+  constructor(contractAddress: `0x${string}`) {
     this.policyManager = new EnhancedPolicyManager();
     this.budgetManager = new BudgetManager();
-    this.whitelistManager = new WhitelistManager();
+    this.whitelistManager = new WhitelistManager(contractAddress);
   }
 
   // 策略管理

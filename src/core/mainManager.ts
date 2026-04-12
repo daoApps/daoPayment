@@ -18,12 +18,15 @@ class MainManager {
   private auditIntegrator: AuditIntegrator;
   private agentInterface: AgentInterface;
 
-  constructor(encryptionKey: string = 'default-encryption-key') {
+  constructor(
+    encryptionKey: string = 'default-encryption-key',
+    policyContractAddress: `0x${string}` = '0x0000000000000000000000000000000000000000'
+  ) {
     this.walletManager = new WalletManager();
     this.recoveryManager = new RecoveryManager();
     this.permissionManager = new PermissionManager(encryptionKey);
     this.sessionKeyManager = new SessionKeyManager();
-    this.securityManager = new SecurityManager();
+    this.securityManager = new SecurityManager(policyContractAddress);
     this.auditIntegrator = new AuditIntegrator();
     const paymentExecutor = new PaymentExecutor(this.securityManager);
     this.sessionKeyIntegrator = new SessionKeyIntegrator(paymentExecutor);

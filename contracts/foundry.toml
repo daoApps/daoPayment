@@ -1,0 +1,12 @@
+[profile.default]
+src = 'src'
+out = 'out'
+libs = ['lib']
+solc_version = '0.8.28'
+optimizer = {
+    enabled = true
+    runs = 200
+}
+
+[rpc_endpoints]
+monad-testnet = "https://testnet-rpc-monad.blastapi.io"

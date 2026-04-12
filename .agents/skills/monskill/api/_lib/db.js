@@ -1,5 +1,5 @@
-import { neon } from "@neondatabase/serverless";
-import { createHash } from "crypto";
+import { neon } from '@neondatabase/serverless';
+import { createHash } from 'crypto';
 
 export function getDb() {
   return neon(process.env.DATABASE_URL);
@@ -12,5 +12,5 @@ export function getDb() {
  */
 export function hashIp(ip) {
   const daySalt = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-  return createHash("sha256").update(`${ip}:${daySalt}`).digest("hex");
+  return createHash('sha256').update(`${ip}:${daySalt}`).digest('hex');
 }

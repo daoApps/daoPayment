@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import I18nClientLayout from './I18nClientLayout';
+import WagmiProviderWrapper from './WagmiProvider';
 
 export const metadata: Metadata = {
   title: 'DAO Payment',
@@ -15,9 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <I18nClientLayout>
-          {children}
-        </I18nClientLayout>
+        <WagmiProviderWrapper>
+          <I18nClientLayout>{children}</I18nClientLayout>
+        </WagmiProviderWrapper>
       </body>
     </html>
   );

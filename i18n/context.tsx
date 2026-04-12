@@ -1,6 +1,12 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react';
 import type { Language, Translations } from './types';
 import { en, zh } from './types';
 
@@ -22,7 +28,10 @@ interface I18nProviderProps {
   defaultLanguage?: Language;
 }
 
-export function I18nProvider({ children, defaultLanguage = 'en' }: I18nProviderProps) {
+export function I18nProvider({
+  children,
+  defaultLanguage = 'en',
+}: I18nProviderProps) {
   const [language, setLanguage] = useState<Language>(defaultLanguage);
   const [isClient, setIsClient] = useState(false);
 
@@ -46,7 +55,7 @@ export function I18nProvider({ children, defaultLanguage = 'en' }: I18nProviderP
   }, [language, isClient]);
 
   const toggleLanguage = () => {
-    setLanguage(prev => prev === 'en' ? 'zh' : 'en');
+    setLanguage((prev) => (prev === 'en' ? 'zh' : 'en'));
   };
 
   const value: I18nContextType = {

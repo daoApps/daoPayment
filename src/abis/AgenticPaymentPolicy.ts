@@ -1,0 +1,132 @@
+export const AgenticPaymentPolicyAbi = [
+  {
+    name: 'setPolicy',
+    type: 'function',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'policyId', type: 'bytes32' },
+      { name: 'maxDailySpend', type: 'uint256' },
+      { name: 'requireApprovalAbove', type: 'uint256' },
+      { name: 'allowedRecipients', type: 'address[]' },
+      { name: 'allowedTokens', type: 'address[]' },
+      { name: 'allowedCategories', type: 'string[]' },
+      { name: 'blockedMethods', type: 'string[]' },
+    ],
+    outputs: [],
+  },
+  {
+    name: 'getPolicy',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: 'policyId', type: 'bytes32' }],
+    outputs: [
+      { name: 'maxDailySpend', type: 'uint256' },
+      { name: 'requireApprovalAbove', type: 'uint256' },
+      { name: 'allowedRecipients', type: 'address[]' },
+      { name: 'allowedTokens', type: 'address[]' },
+      { name: 'allowedCategories', type: 'string[]' },
+      { name: 'blockedMethods', type: 'string[]' },
+      { name: 'enabled', type: 'bool' },
+    ],
+  },
+  {
+    name: 'getBudget',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: 'wallet', type: 'address' }],
+    outputs: [
+      { name: 'dailyLimit', type: 'uint256' },
+      { name: 'weeklyLimit', type: 'uint256' },
+      { name: 'spentToday', type: 'uint256' },
+      { name: 'spentThisWeek', type: 'uint256' },
+    ],
+  },
+  {
+    name: 'setBudget',
+    type: 'function',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'wallet', type: 'address' },
+      { name: 'dailyLimit', type: 'uint256' },
+      { name: 'weeklyLimit', type: 'uint256' },
+    ],
+    outputs: [],
+  },
+  {
+    name: 'recordSpend',
+    type: 'function',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'wallet', type: 'address' },
+      { name: 'amount', type: 'uint256' },
+    ],
+    outputs: [],
+  },
+  {
+    name: 'createWhitelist',
+    type: 'function',
+    stateMutability: 'nonpayable',
+    inputs: [{ name: 'id', type: 'bytes32' }],
+    outputs: [],
+  },
+  {
+    name: 'addRecipients',
+    type: 'function',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'whitelistId', type: 'bytes32' },
+      { name: 'recipients', type: 'address[]' },
+    ],
+    outputs: [],
+  },
+  {
+    name: 'removeRecipient',
+    type: 'function',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'whitelistId', type: 'bytes32' },
+      { name: 'recipient', type: 'address' },
+    ],
+    outputs: [],
+  },
+  {
+    name: 'isRecipientAllowed',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [
+      { name: 'whitelistId', type: 'bytes32' },
+      { name: 'recipient', type: 'address' },
+    ],
+    outputs: [{ name: '', type: 'bool' }],
+  },
+  {
+    name: 'getWhitelistRecipients',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: 'whitelistId', type: 'bytes32' }],
+    outputs: [{ name: '', type: 'address[]' }],
+  },
+  {
+    name: 'disableWhitelist',
+    type: 'function',
+    stateMutability: 'nonpayable',
+    inputs: [{ name: 'whitelistId', type: 'bytes32' }],
+    outputs: [],
+  },
+  {
+    name: 'getAllPolicies',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ name: '', type: 'bytes32[]' }],
+  },
+  {
+    name: 'getAllWhitelists',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ name: '', type: 'bytes32[]' }],
+  },
+] as const;
+
+export default AgenticPaymentPolicyAbi;

@@ -1,4 +1,10 @@
-import { createPublicClient, http, encodeFunctionData, hashTypedData, getAddress } from 'viem';
+import {
+  createPublicClient,
+  http,
+  encodeFunctionData,
+  hashTypedData,
+  getAddress,
+} from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import qrcode from 'qrcode-terminal';
 
@@ -20,8 +26,16 @@ import qrcode from 'qrcode-terminal';
 //      TX_VALUE — value in wei (optional, defaults to "0")
 
 const NETWORKS = {
-  143:   { rpcUrl: 'https://rpc.monad.xyz',         txService: 'https://api.safe.global/tx-service/monad/api/v1',         safePrefix: 'monad' },
-  10143: { rpcUrl: 'https://testnet-rpc.monad.xyz',  txService: 'https://api.safe.global/tx-service/monad-testnet/api/v1', safePrefix: 'monad-testnet' },
+  143: {
+    rpcUrl: 'https://rpc.monad.xyz',
+    txService: 'https://api.safe.global/tx-service/monad/api/v1',
+    safePrefix: 'monad',
+  },
+  10143: {
+    rpcUrl: 'https://testnet-rpc.monad.xyz',
+    txService: 'https://api.safe.global/tx-service/monad-testnet/api/v1',
+    safePrefix: 'monad-testnet',
+  },
 };
 
 const CREATE_CALL_ADDRESS = '0x9b35Af71d77eaf8d7e40252370304687390A1A52';
@@ -29,7 +43,9 @@ const CREATE_CALL_ADDRESS = '0x9b35Af71d77eaf8d7e40252370304687390A1A52';
 const CHAIN_ID = Number(process.env.CHAIN_ID);
 const network = NETWORKS[CHAIN_ID];
 if (!network) {
-  console.error(`❌ Unsupported CHAIN_ID: ${CHAIN_ID}. Use 143 (mainnet) or 10143 (testnet).`);
+  console.error(
+    `❌ Unsupported CHAIN_ID: ${CHAIN_ID}. Use 143 (mainnet) or 10143 (testnet).`
+  );
   process.exit(1);
 }
 
@@ -39,16 +55,26 @@ function buildTransaction() {
   // Mode A: contract deployment via CreateCall
   if (process.env.DEPLOYMENT_BYTECODE) {
     const createCallData = encodeFunctionData({
-      abi: [{
-        name: 'performCreate',
-        type: 'function',
-        inputs: [{ name: 'value', type: 'uint256' }, { name: 'deploymentData', type: 'bytes' }],
-        outputs: [{ name: '', type: 'address' }],
-      }],
+      abi: [
+        {
+          name: 'performCreate',
+          type: 'function',
+          inputs: [
+            { name: 'value', type: 'uint256' },
+            { name: 'deploymentData', type: 'bytes' },
+          ],
+          outputs: [{ name: '', type: 'address' }],
+        },
+      ],
       functionName: 'performCreate',
       args: [0n, process.env.DEPLOYMENT_BYTECODE],
     });
-    return { to: CREATE_CALL_ADDRESS, value: '0', data: createCallData, operation: 1 }; // DELEGATECALL
+    return {
+      to: CREATE_CALL_ADDRESS,
+      value: '0',
+      data: createCallData,
+      operation: 1,
+    }; // DELEGATECALL
   }
 
   // Mode B: arbitrary contract call
@@ -61,7 +87,9 @@ function buildTransaction() {
     };
   }
 
-  console.error('❌ Provide either DEPLOYMENT_BYTECODE (deploy) or TX_TO + TX_DATA (contract call).');
+  console.error(
+    '❌ Provide either DEPLOYMENT_BYTECODE (deploy) or TX_TO + TX_DATA (contract call).'
+  );
   process.exit(1);
 }
 
@@ -76,7 +104,15 @@ async function main() {
 
   const nonce = await publicClient.readContract({
     address: SAFE_ADDRESS,
-    abi: [{ name: 'nonce', type: 'function', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint256' }] }],
+    abi: [
+      {
+        name: 'nonce',
+        type: 'function',
+        stateMutability: 'view',
+        inputs: [],
+        outputs: [{ type: 'uint256' }],
+      },
+    ],
     functionName: 'nonce',
   });
 
@@ -138,16 +174,19 @@ async function main() {
 
   // POST to Transaction Service API
   console.log('📤 Posting to Transaction Service API...');
-  const response = await fetch(`${network.txService}/safes/${SAFE_ADDRESS}/multisig-transactions/`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      ...txData,
-      contractTransactionHash: txHash,
-      sender: account.address,
-      signature,
-    }),
-  });
+  const response = await fetch(
+    `${network.txService}/safes/${SAFE_ADDRESS}/multisig-transactions/`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...txData,
+        contractTransactionHash: txHash,
+        sender: account.address,
+        signature,
+      }),
+    }
+  );
 
   if (response.ok) {
     const safeUrl = `https://app.safe.global/transactions/queue?safe=${network.safePrefix}:${SAFE_ADDRESS}`;

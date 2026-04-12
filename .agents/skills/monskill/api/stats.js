@@ -1,12 +1,12 @@
-import { getDb } from "./_lib/db.js";
+import { getDb } from './_lib/db.js';
 
 export default async function handler(req, res) {
   if (!process.env.STATS_SECRET || req.query.key !== process.env.STATS_SECRET) {
-    return res.status(401).json({ error: "Unauthorized" });
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
   if (!process.env.DATABASE_URL) {
-    return res.status(500).json({ error: "DATABASE_URL not configured" });
+    return res.status(500).json({ error: 'DATABASE_URL not configured' });
   }
 
   const sql = getDb();
@@ -27,7 +27,10 @@ export default async function handler(req, res) {
         ORDER BY unique_visitors DESC`,
   ]);
 
-  res.setHeader("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300");
+  res.setHeader(
+    'Cache-Control',
+    'public, s-maxage=60, stale-while-revalidate=300'
+  );
   return res.status(200).json({
     totals,
     unique_visitors: uniqueVisitors,

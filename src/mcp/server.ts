@@ -1,233 +1,91 @@
-import { createServer, IncomingMessage, ServerResponse } from 'http';
-import MainManager from '../core/mainManager';
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import {
+  CallToolRequestSchema,
+  ErrorCode,
+  ListToolsRequestSchema,
+  McpError,
+} from '@modelcontextprotocol/sdk/types.js';
+import registry from './tools/registry.js';
+import { ITool } from './tools/types.js';
 
 class MCPServer {
-  private server: ReturnType<typeof createServer>;
-  private manager: MainManager;
+  private server: Server;
 
-  constructor(port: number = 3000) {
-    this.manager = new MainManager();
-    this.server = createServer(this.handleRequest.bind(this));
-    this.server.listen(port, () => {
-      console.log(`MCP Server running on port ${port}`);
+  constructor() {
+    this.server = new Server(
+      {
+        name: 'monad-agentic-payment',
+        version: '1.0.0',
+      },
+      {
+        capabilities: {
+          tools: {},
+        },
+      }
+    );
+
+    this.setupHandlers();
+  }
+
+  private setupHandlers() {
+    this.server.setRequestHandler(ListToolsRequestSchema, async () => {
+      const tools = Array.from(registry.values()).map((tool: ITool) => ({
+        name: tool.name,
+        description: tool.description,
+        inputSchema: tool.inputSchema,
+      }));
+
+      return {
+        tools,
+      };
+    });
+
+    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
+      const tool = registry.get(request.params.name);
+      if (!tool) {
+        throw new McpError(
+          ErrorCode.MethodNotFound,
+          `Unknown tool: ${request.params.name}`
+        );
+      }
+
+      try {
+        const result = await tool.execute(request.params.arguments);
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(result, null, 2),
+            },
+          ],
+        };
+      } catch (error) {
+        throw new McpError(
+          ErrorCode.InternalError,
+          `Tool execution failed: ${(error as Error).message}`
+        );
+      }
     });
   }
 
-  private handleRequest(req: IncomingMessage, res: ServerResponse) {
-    res.setHeader('Content-Type', 'application/json');
-
-    if (req.method === 'POST') {
-      let body = '';
-      req.on('data', (chunk: Buffer) => {
-        body += chunk.toString();
-      });
-      req.on('end', () => {
-        try {
-          const request = JSON.parse(body);
-          this.handleMCPRequest(request, res);
-        } catch (_error) {
-          res.statusCode = 400;
-          res.end(JSON.stringify({ error: 'Invalid JSON' }));
-        }
-      });
-    } else {
-      res.statusCode = 405;
-      res.end(JSON.stringify({ error: 'Method not allowed' }));
-    }
+  async startStdio() {
+    const transport = new StdioServerTransport();
+    await this.server.connect(transport);
+    console.error('Monad Agentic Payment MCP Server running on stdio');
   }
 
-  private handleMCPRequest(request: any, res: ServerResponse) {
-    const { toolcall } = request;
-    if (!toolcall) {
-      res.statusCode = 400;
-      res.end(JSON.stringify({ error: 'Missing toolcall' }));
-      return;
-    }
-
-    const { name, params } = toolcall;
-    switch (name) {
-      case 'createWallet':
-        this.handleCreateWallet(res);
-        break;
-      case 'getWalletBalance':
-        this.handleGetWalletBalance(params, res);
-        break;
-      case 'executePayment':
-        this.handleExecutePayment(params, res);
-        break;
-      case 'generateSessionKey':
-        this.handleGenerateSessionKey(params, res);
-        break;
-      case 'listAuditRecords':
-        this.handleListAuditRecords(params, res);
-        break;
-      case 'createPolicy':
-        this.handleCreatePolicy(params, res);
-        break;
-      case 'createTemplatePolicy':
-        this.handleCreateTemplatePolicy(params, res);
-        break;
-      case 'setBudget':
-        this.handleSetBudget(params, res);
-        break;
-      case 'getBudget':
-        this.handleGetBudget(params, res);
-        break;
-      default:
-        res.statusCode = 404;
-        res.end(JSON.stringify({ error: 'Tool not found' }));
-    }
-  }
-
-  private handleCreateWallet(res: ServerResponse) {
-    try {
-      const walletAddress = this.manager.createWallet();
-      res.statusCode = 200;
-      res.end(JSON.stringify({ result: { walletAddress } }));
-    } catch (error) {
-      res.statusCode = 500;
-      res.end(JSON.stringify({ error: (error as Error).message }));
-    }
-  }
-
-  private async handleGetWalletBalance(params: any, res: ServerResponse) {
-    try {
-      const { walletAddress } = params;
-      const balance = await this.manager
-        .getAgentInterface()
-        .getWalletBalance(walletAddress);
-      res.statusCode = 200;
-      res.end(JSON.stringify({ result: { balance } }));
-    } catch (error) {
-      res.statusCode = 500;
-      res.end(JSON.stringify({ error: (error as Error).message }));
-    }
-  }
-
-  private async handleExecutePayment(params: any, res: ServerResponse) {
-    try {
-      // 检查是否使用 session key
-      if (params.sessionKeyId) {
-        const { sessionKeyId, walletAddress, ...paymentRequest } = params;
-        const result = await this.manager.executePaymentWithSessionKey(
-          sessionKeyId,
-          walletAddress,
-          paymentRequest
-        );
-        res.statusCode = 200;
-        res.end(JSON.stringify({ result }));
-      } else {
-        // 传统方式：使用 Agent 权限系统
-        const result = await this.manager
-          .getAgentInterface()
-          .executePayment(params);
-        res.statusCode = 200;
-        res.end(JSON.stringify({ result }));
-      }
-    } catch (error) {
-      res.statusCode = 500;
-      res.end(JSON.stringify({ error: (error as Error).message }));
-    }
-  }
-
-  private handleGenerateSessionKey(params: any, res: ServerResponse) {
-    try {
-      const {
-        agentId,
-        walletAddress,
-        permissions,
-        expiration,
-        maxAmount,
-        dailyLimit,
-      } = params;
-      const sessionKey = this.manager.generateSessionKey(
-        agentId,
-        walletAddress,
-        permissions,
-        expiration,
-        maxAmount,
-        dailyLimit
-      );
-      res.statusCode = 200;
-      res.end(JSON.stringify({ result: sessionKey }));
-    } catch (error) {
-      res.statusCode = 500;
-      res.end(JSON.stringify({ error: (error as Error).message }));
-    }
-  }
-
-  private handleListAuditRecords(params: any, res: ServerResponse) {
-    try {
-      const records = this.manager
-        .getAuditIntegrator()
-        .listAuditRecords(params);
-      res.statusCode = 200;
-      res.end(JSON.stringify({ result: records }));
-    } catch (error) {
-      res.statusCode = 500;
-      res.end(JSON.stringify({ error: (error as Error).message }));
-    }
-  }
-
-  private handleCreatePolicy(params: any, res: ServerResponse) {
-    try {
-      const { policyId, name, description, rules } = params;
-      this.manager
-        .getSecurityManager()
-        .createPolicy(policyId, name, description, rules);
-      res.statusCode = 200;
-      res.end(JSON.stringify({ result: { success: true } }));
-    } catch (error) {
-      res.statusCode = 500;
-      res.end(JSON.stringify({ error: (error as Error).message }));
-    }
-  }
-
-  private handleCreateTemplatePolicy(params: any, res: ServerResponse) {
-    try {
-      const { templateType } = params;
-      const policy = this.manager.createTemplatePolicy(templateType);
-      res.statusCode = 200;
-      res.end(JSON.stringify({ result: policy }));
-    } catch (error) {
-      res.statusCode = 500;
-      res.end(JSON.stringify({ error: (error as Error).message }));
-    }
-  }
-
-  private handleSetBudget(params: any, res: ServerResponse) {
-    try {
-      const { walletAddress, dailyLimit, weeklyLimit } = params;
-      this.manager
-        .getSecurityManager()
-        .getBudgetManager()
-        .setBudget(walletAddress, dailyLimit, weeklyLimit);
-      res.statusCode = 200;
-      res.end(JSON.stringify({ result: { success: true } }));
-    } catch (error) {
-      res.statusCode = 500;
-      res.end(JSON.stringify({ error: (error as Error).message }));
-    }
-  }
-
-  private handleGetBudget(params: any, res: ServerResponse) {
-    try {
-      const { walletAddress } = params;
-      const budget = this.manager
-        .getSecurityManager()
-        .getBudgetManager()
-        .getBudget(walletAddress);
-      res.statusCode = 200;
-      res.end(JSON.stringify({ result: budget }));
-    } catch (error) {
-      res.statusCode = 500;
-      res.end(JSON.stringify({ error: (error as Error).message }));
-    }
-  }
-
-  stop() {
-    this.server.close();
+  getServer(): Server {
+    return this.server;
   }
 }
 
 export default MCPServer;
+
+if (require.main === module) {
+  const server = new MCPServer();
+  server.startStdio().catch((error) => {
+    console.error('Fatal error starting MCP server:', error);
+    process.exit(1);
+  });
+}

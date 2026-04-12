@@ -1,4 +1,4 @@
-import { monad } from '../../node_modules/@monad-crypto/mpp/packages/mpp/dist/client/index.js';
+import { monad } from '@monad-crypto/mpp/packages/mpp/dist/client/index.js';
 import { privateKeyToAccount, generatePrivateKey } from 'viem/accounts';
 import * as fs from 'fs';
 import type { LocalAccount } from 'viem/accounts';
@@ -120,7 +120,14 @@ class Wallet {
       throw new Error('Wallet file not found');
     }
     const walletData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-    return new Wallet(walletData.privateKey as `0x${string}`);
+    if (!walletData.privateKey) {
+      throw new Error('Invalid wallet file: missing privateKey');
+    }
+    let privateKey = walletData.privateKey as `0x${string}`;
+    if (!privateKey.startsWith('0x')) {
+      privateKey = `0x${privateKey}` as `0x${string}`;
+    }
+    return new Wallet(privateKey);
   }
 }
 

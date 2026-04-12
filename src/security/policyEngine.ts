@@ -1,6 +1,13 @@
 interface PolicyRule {
   id: string;
-  type: 'amount' | 'category' | 'recipient' | 'token' | 'method' | 'time';
+  type:
+    | 'amount'
+    | 'category'
+    | 'recipient'
+    | 'token'
+    | 'method'
+    | 'time'
+    | 'whitelist';
   operator: 'eq' | 'ne' | 'gt' | 'lt' | 'gte' | 'lte' | 'in' | 'not_in';
   value: any;
   action: 'allow' | 'deny' | 'require_approval';
