@@ -27,13 +27,22 @@ export function usePolicyRead({
   contractAddress,
   policyId,
 }: UsePolicyReadParams) {
-  const { data, isError, isLoading, error } = useReadContract({
+  const isAddressValid = contractAddress && 
+    contractAddress !== '0x0000000000000000000000000000000000000000';
+
+  const {
+    data,
+    isError,
+    isLoading,
+    error,
+  } = useReadContract({
     address: contractAddress,
     abi: POLICY_ABI,
     functionName: 'getPolicy',
     args: [policyId],
     query: {
-      staleTime: 10000, // 10 seconds cache
+      staleTime: 10000,
+      enabled: isAddressValid,
     },
   });
 
@@ -102,9 +111,9 @@ export function usePolicyRead({
           )[5],
         }
       : undefined,
-    isError,
-    isLoading,
-    error,
+    isError: isAddressValid ? isError : false,
+    isLoading: isAddressValid ? isLoading : false,
+    error: isAddressValid ? error : undefined,
   };
 }
 

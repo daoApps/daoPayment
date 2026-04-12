@@ -25,13 +25,22 @@ export function useBudgetRead({
   contractAddress,
   walletAddress,
 }: UseBudgetReadParams) {
-  const { data, isError, isLoading, error } = useReadContract({
+  const isAddressValid = contractAddress && 
+    contractAddress !== '0x0000000000000000000000000000000000000000';
+
+  const {
+    data,
+    isError,
+    isLoading,
+    error,
+  } = useReadContract({
     address: contractAddress,
     abi: BUDGET_ABI,
     functionName: 'getBudget',
     args: [walletAddress],
     query: {
       staleTime: 5000,
+      enabled: isAddressValid,
     },
   });
 
@@ -52,9 +61,9 @@ export function useBudgetRead({
             (data as unknown as [bigint, bigint, bigint, bigint])[3],
         }
       : undefined,
-    isError,
-    isLoading,
-    error,
+    isError: isAddressValid ? isError : false,
+    isLoading: isAddressValid ? isLoading : false,
+    error: isAddressValid ? error : undefined,
   };
 }
 

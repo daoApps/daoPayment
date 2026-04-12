@@ -82,7 +82,8 @@ class MCPServer {
 
 export default MCPServer;
 
-if (require.main === module) {
+import { fileURLToPath } from 'url';
+if (import.meta.url === `file://${fileURLToPath(import.meta.url)}` && process.argv[1] === fileURLToPath(import.meta.url)) {
   const server = new MCPServer();
   server.startStdio().catch((error) => {
     console.error('Fatal error starting MCP server:', error);

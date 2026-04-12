@@ -1,15 +1,15 @@
-import { ToolRegistry } from './types';
-import create_wallet from './create_wallet';
-import list_wallets from './list_wallets';
-import get_wallet_balance from './get_wallet_balance';
-import generate_session_key from './generate_session_key';
-import revoke_session_key from './revoke_session_key';
-import list_session_keys from './list_session_keys';
-import execute_payment from './execute_payment';
-import create_policy from './create_policy';
-import create_policy_template from './create_policy_template';
-import list_audit_records from './list_audit_records';
-import get_audit_report from './get_audit_report';
+import { ToolRegistry } from './types.js';
+import create_wallet from './create_wallet.js';
+import list_wallets from './list_wallets.js';
+import get_wallet_balance from './get_wallet_balance.js';
+import generate_session_key from './generate_session_key.js';
+import revoke_session_key from './revoke_session_key.js';
+import list_session_keys from './list_session_keys.js';
+import execute_payment from './execute_payment.js';
+import create_policy from './create_policy.js';
+import create_policy_template from './create_policy_template.js';
+import list_audit_records from './list_audit_records.js';
+import get_audit_report from './get_audit_report.js';
 
 const registry: ToolRegistry = new Map();
 

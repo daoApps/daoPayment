@@ -73,21 +73,21 @@ export default function WhitelistManagerComponent({
   };
 
   return (
-    <div className="space-y-4 p-4 border rounded-lg">
-      <h3 className="text-lg font-semibold">Whitelist Management</h3>
-      <p className="text-sm text-gray-600">
+    <div className="space-y-4 p-4 border border-border-color rounded-lg bg-bg-tertiary">
+      <h3 className="text-lg font-semibold text-text-primary">Whitelist Management</h3>
+      <p className="text-sm text-text-secondary">
         Add addresses that your AI Agent is allowed to pay. Only whitelisted
         recipients will be allowed to receive payments.
       </p>
 
       <div className="space-y-2">
-        <h4 className="font-medium">Predefined Services</h4>
+        <h4 className="font-medium text-text-primary">Predefined Services</h4>
         <div className="flex flex-wrap gap-2">
           {PREDEFINED_SERVICES.map((service) => (
             <button
               key={service.name}
               onClick={() => addPredefined(service)}
-              className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm hover:bg-blue-200"
+              className="px-3 py-1 bg-accent-primary/20 text-accent-primary rounded-full text-sm hover:bg-accent-primary/30"
             >
               + {service.name} ({service.category})
             </button>
@@ -96,19 +96,19 @@ export default function WhitelistManagerComponent({
       </div>
 
       <div className="space-y-2">
-        <h4 className="font-medium">Add Custom Address</h4>
-        <div className="flex gap-2">
+        <h4 className="font-medium text-text-primary">Add Custom Address</h4>
+        <div className="flex gap-2 flex-wrap">
           <input
             type="text"
             value={newAddress}
             onChange={(e) => setNewAddress(e.target.value)}
             placeholder="0x..."
-            className="flex-1 px-3 py-2 border rounded"
+            className="flex-1 min-w-[200px] px-3 py-2 border border-border-color rounded bg-bg-secondary text-text-primary"
           />
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="px-3 py-2 border rounded"
+            className="px-3 py-2 border border-border-color rounded bg-bg-secondary text-text-primary"
           >
             <option value="api">API</option>
             <option value="cloud">Cloud</option>
@@ -119,7 +119,7 @@ export default function WhitelistManagerComponent({
           </select>
           <button
             onClick={addCustomAddress}
-            className="px-4 py-2 bg-green-500 text-white rounded disabled:opacity-50"
+            className="px-4 py-2 bg-accent-primary text-white rounded disabled:opacity-50 hover:bg-accent-secondary transition-colors"
             disabled={!newAddress || !newAddress.startsWith('0x')}
           >
             Add
@@ -129,21 +129,21 @@ export default function WhitelistManagerComponent({
 
       {recipients.length > 0 && (
         <div className="space-y-2">
-          <h4 className="font-medium">
+          <h4 className="font-medium text-text-primary">
             Whitelisted Recipients ({recipients.length})
           </h4>
           <div className="space-y-1">
             {recipients.map((address) => (
               <div
                 key={address}
-                className="flex justify-between items-center px-3 py-2 bg-gray-50 rounded"
+                className="flex justify-between items-center px-3 py-2 bg-bg-secondary rounded border border-border-color"
               >
-                <span className="font-mono text-sm">
+                <span className="font-mono text-sm text-text-primary">
                   {address.slice(0, 10)}...{address.slice(-4)}
                 </span>
                 <button
                   onClick={() => removeAddress(address)}
-                  className="px-2 py-1 text-red-500 hover:bg-red-100 rounded text-sm"
+                  className="px-2 py-1 text-accent-danger hover:bg-accent-danger/10 rounded text-sm transition-colors"
                 >
                   Remove
                 </button>
@@ -157,19 +157,19 @@ export default function WhitelistManagerComponent({
         <button
           onClick={saveToChain}
           disabled={isPending || recipients.length === 0}
-          className="w-full px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+          className="w-full px-4 py-2 bg-accent-primary text-white rounded disabled:opacity-50 hover:bg-accent-secondary transition-colors"
         >
           {isPending ? 'Saving...' : 'Save to Chain'}
         </button>
 
         {isSuccess && (
-          <div className="mt-2 p-2 bg-green-100 text-green-800 rounded">
+          <div className="mt-2 p-2 bg-accent-success/10 text-accent-success rounded border border-accent-success/30">
             ✓ Whitelist saved successfully on-chain
           </div>
         )}
 
         {error && (
-          <div className="mt-2 p-2 bg-red-100 text-red-800 rounded">
+          <div className="mt-2 p-2 bg-accent-danger/10 text-accent-danger rounded border border-accent-danger/30">
             ✗ Error: {error.message}
           </div>
         )}

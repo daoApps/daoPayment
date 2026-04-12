@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { ITool } from './types';
-import MainManager from '../../core/mainManager';
+import { ITool } from './types.js';
+import MainManager from '../../core/mainManager.js';
 
 const manager = new MainManager();
 

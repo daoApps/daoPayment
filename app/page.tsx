@@ -5,7 +5,7 @@ import Link from 'next/link';
 export default function Home() {
   return (
     <main className="gradient-bg noise min-h-screen flex flex-col">
-      <div className="container mx-auto px-4 py-16 md:py-24 flex-1">
+      <div className="container mx-auto px-4 py-12 md:py-16 lg:py-24 flex-1">
         {/* Hero Section */}
         <div className="max-w-5xl mx-auto text-center mb-16 md:mb-24">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card mb-8">
@@ -47,7 +47,7 @@ export default function Home() {
         </div>
 
         {/* Feature Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 max-w-6xl mx-auto">
           <div className="glass-card p-6 md:p-8">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mb-6">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -154,8 +154,8 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-border-color mt-20 py-8">
-        <div className="container mx-auto px-4 text-center text-text-muted">
+      <footer className="border-t border-border-color mt-16 md:mt-20 py-8">
+        <div className="container mx-auto px-4 max-w-7xl text-center text-text-muted">
           <p>Built for Monad Blitz • Agentic Payment Track</p>
         </div>
       </footer>

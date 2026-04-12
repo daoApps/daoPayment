@@ -11,7 +11,9 @@ export default function I18nClientLayout({
 }) {
   return (
     <I18nProvider>
-      <LanguageSwitcher />
+      <div className="fixed top-4 right-4 z-50">
+        <LanguageSwitcher />
+      </div>
       {children}
     </I18nProvider>
   );

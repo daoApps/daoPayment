@@ -76,38 +76,38 @@ export default function PendingTransactionsList({
   };
 
   if (loading) {
-    return <div className="p-4">Loading pending transactions...</div>;
+    return <div className="p-4 text-text-primary">Loading pending transactions...</div>;
   }
 
   if (error) {
-    return <div className="p-4 text-red-500">Error: {error}</div>;
+    return <div className="p-4 text-accent-error">Error: {error}</div>;
   }
 
   if (transactions.length === 0) {
-    return <div className="p-4 text-gray-500">No pending transactions</div>;
+    return <div className="p-4 text-text-secondary">No pending transactions</div>;
   }
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold">
+      <h3 className="text-lg font-semibold text-text-primary">
         Pending Transactions ({transactions.length})
       </h3>
       {transactions.map((tx) => (
-        <div key={tx.safeTxHash} className="border rounded-lg p-4 space-y-2">
+        <div key={tx.safeTxHash} className="border border-border-color rounded-lg p-4 space-y-2 bg-bg-tertiary">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-text-secondary">
                 To:{' '}
-                <span className="font-mono">
+                <span className="font-mono text-text-primary">
                   {tx.to.slice(0, 6)}...{tx.to.slice(-4)}
                 </span>
               </p>
-              <p className="text-sm text-gray-600">Value: {tx.value} wei</p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-text-secondary">Value: {tx.value} wei</p>
+              <p className="text-sm text-text-secondary">
                 Confirmations: {confirmationsCount(tx)} /{' '}
                 {tx.confirmationsRequired}
               </p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-text-secondary">
                 Submitted: {new Date(tx.submissionDate).toLocaleString()}
               </p>
             </div>
@@ -116,14 +116,14 @@ export default function PendingTransactionsList({
             <button
               onClick={() => handleApprove(tx, 'user-signature-here')}
               disabled={processingTxHash === tx.safeTxHash}
-              className="px-4 py-2 bg-green-500 text-white rounded disabled:opacity-50"
+              className="px-4 py-2 bg-accent-success text-white rounded disabled:opacity-50 hover:bg-accent-success/80 transition-colors"
             >
               {processingTxHash === tx.safeTxHash ? 'Approving...' : 'Approve'}
             </button>
             <button
               onClick={() => handleReject(tx)}
               disabled={processingTxHash === tx.safeTxHash}
-              className="px-4 py-2 bg-red-500 text-white rounded disabled:opacity-50"
+              className="px-4 py-2 bg-accent-error text-white rounded disabled:opacity-50 hover:bg-accent-error/80 transition-colors"
             >
               {processingTxHash === tx.safeTxHash ? 'Rejecting...' : 'Reject'}
             </button>
