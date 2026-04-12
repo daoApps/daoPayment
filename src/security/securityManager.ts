@@ -1,20 +1,25 @@
 import BudgetManager from './budgetManager.js';
 import WhitelistManager from './whitelistManager.js';
 import EnhancedPolicyManager from './enhancedPolicyManager.js';
+import RiskConfigManager from './riskConfigManager.js';
+import { RiskAssessmentConfig, RiskRule } from '../types/riskConfig.js';
 
 class SecurityManager {
   private policyManager: EnhancedPolicyManager;
   private budgetManager: BudgetManager;
   private whitelistManager: WhitelistManager;
+  private riskConfigManager: RiskConfigManager;
 
-  constructor(contractAddress: `0x${string}`) {
+  constructor(contractAddress: `0x${string}`, riskConfigPath?: string) {
     this.policyManager = new EnhancedPolicyManager();
     this.budgetManager = new BudgetManager();
     this.whitelistManager = new WhitelistManager(contractAddress);
+    this.riskConfigManager = new RiskConfigManager(riskConfigPath);
   }
 
   async initialize(): Promise<void> {
     await this.policyManager.initialize();
+    await this.riskConfigManager.loadConfig();
   }
 
   // 策略管理
@@ -210,42 +215,109 @@ class SecurityManager {
     const alerts: string[] = [];
     let score = 0;
 
-    // 金额风险
-    if (amount > 10000) {
-      score += 30;
-      alerts.push('High amount transaction detected');
-    } else if (amount > 1000) {
-      score += 15;
-      alerts.push('Medium amount transaction detected');
-    }
+    const config = this.riskConfigManager.getConfig();
+    const enabledRules = config.rules.filter(rule => rule.enabled);
 
-    // 新地址风险
-    if (metadata?.isNewRecipient) {
-      score += 25;
-      alerts.push('Transaction to new recipient');
-    }
-
-    // 时间风险（非工作时间）
-    const now = new Date();
-    const hour = now.getHours();
-    if (hour < 6 || hour > 22) {
-      score += 10;
-      alerts.push('Transaction during off-hours');
-    }
-
-    // 方法风险
-    if (method === 'approve' || method === 'delegate') {
-      score += 20;
-      alerts.push('High-risk method detected');
-    }
-
-    // 类别风险
-    if (category === 'high_risk') {
-      score += 25;
-      alerts.push('High-risk category transaction');
+    for (const rule of enabledRules) {
+      if (this.evaluateRiskRule(rule, amount, recipient, method, category, metadata)) {
+        score += rule.weight;
+        alerts.push(rule.alertMessage);
+      }
     }
 
     return { score, alerts };
+  }
+
+  private evaluateRiskRule(
+    rule: RiskRule,
+    amount: number,
+    recipient: string,
+    method: string,
+    category: string,
+    metadata?: Record<string, any>
+  ): boolean {
+    const config = this.riskConfigManager.getConfig();
+
+    for (const condition of rule.conditions) {
+      let conditionMet = false;
+
+      switch (condition.type) {
+        case 'amount':
+          conditionMet = this.evaluateAmountCondition(amount, condition);
+          break;
+        case 'recipient':
+          conditionMet = this.evaluateRecipientCondition(metadata, condition);
+          break;
+        case 'time':
+          conditionMet = this.evaluateTimeCondition(config, condition);
+          break;
+        case 'method':
+          conditionMet = this.evaluateMethodCondition(method, condition);
+          break;
+        case 'category':
+          conditionMet = this.evaluateCategoryCondition(category, condition);
+          break;
+      }
+
+      if (!conditionMet) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  private evaluateAmountCondition(amount: number, condition: any): boolean {
+    switch (condition.operator) {
+      case 'gt':
+        return amount > condition.value;
+      case 'lt':
+        return amount < condition.value;
+      case 'eq':
+        return amount === condition.value;
+      default:
+        return false;
+    }
+  }
+
+  private evaluateRecipientCondition(metadata: Record<string, any> | undefined, condition: any): boolean {
+    if (condition.operator === 'eq' && condition.value === 'isNewRecipient') {
+      return !!metadata?.isNewRecipient;
+    }
+    return false;
+  }
+
+  private evaluateTimeCondition(config: RiskAssessmentConfig, condition: any): boolean {
+    if (condition.value === 'offHours') {
+      const now = new Date();
+      const hour = now.getHours();
+      const { start, end } = config.timeRanges.offHours;
+      
+      if (start > end) {
+        return hour >= start || hour < end;
+      } else {
+        return hour >= start && hour < end;
+      }
+    }
+    return false;
+  }
+
+  private evaluateMethodCondition(method: string, condition: any): boolean {
+    if (condition.operator === 'in') {
+      return condition.value.includes(method);
+    }
+    return false;
+  }
+
+  private evaluateCategoryCondition(category: string, condition: any): boolean {
+    switch (condition.operator) {
+      case 'eq':
+        return category === condition.value;
+      case 'in':
+        return condition.value.includes(category);
+      default:
+        return false;
+    }
   }
 
   // 异常检测
@@ -325,7 +397,9 @@ class SecurityManager {
     reason?: string;
     requiresHumanApproval: boolean;
   } {
-    // 基于风险分数和策略动作做出最终决策
+    const config = this.riskConfigManager.getConfig();
+    const { denyThreshold, approvalThreshold } = config.thresholds;
+
     if (policyAction === 'deny') {
       return {
         allowed: false,
@@ -334,13 +408,13 @@ class SecurityManager {
       };
     }
 
-    if (riskScore > 70) {
+    if (riskScore > denyThreshold) {
       return {
         allowed: false,
         reason: 'High risk transaction',
         requiresHumanApproval: false,
       };
-    } else if (riskScore > 40 || policyAction === 'require_approval') {
+    } else if (riskScore > approvalThreshold || policyAction === 'require_approval') {
       return {
         allowed: true,
         requiresHumanApproval: true,
@@ -458,6 +532,15 @@ class SecurityManager {
 
   getWhitelistManager(): WhitelistManager {
     return this.whitelistManager;
+  }
+
+  // 风险配置管理
+  async reloadRiskConfig(): Promise<void> {
+    await this.riskConfigManager.reloadConfig();
+  }
+
+  getRiskConfig(): RiskAssessmentConfig {
+    return this.riskConfigManager.getConfig();
   }
 }
 
