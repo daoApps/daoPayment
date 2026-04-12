@@ -1,0 +1,8 @@
+{
+  "id": "allow-all",
+  "name": "Allow All",
+  "description": "Allow all payments for testing",
+  "rules": [],
+  "createdAt": 1775966749914,
+  "updatedAt": 1775966749914
+}

@@ -61,6 +61,18 @@ class MCPServer {
       case 'listAuditRecords':
         this.handleListAuditRecords(params, res);
         break;
+      case 'createPolicy':
+        this.handleCreatePolicy(params, res);
+        break;
+      case 'createTemplatePolicy':
+        this.handleCreateTemplatePolicy(params, res);
+        break;
+      case 'setBudget':
+        this.handleSetBudget(params, res);
+        break;
+      case 'getBudget':
+        this.handleGetBudget(params, res);
+        break;
       default:
         res.statusCode = 404;
         res.end(JSON.stringify({ error: 'Tool not found' }));
@@ -92,9 +104,22 @@ class MCPServer {
 
   private async handleExecutePayment(params: any, res: ServerResponse) {
     try {
-      const result = await this.manager.getAgentInterface().executePayment(params);
-      res.statusCode = 200;
-      res.end(JSON.stringify({ result }));
+      // 检查是否使用 session key
+      if (params.sessionKeyId) {
+        const { sessionKeyId, walletAddress, ...paymentRequest } = params;
+        const result = await this.manager.executePaymentWithSessionKey(
+          sessionKeyId,
+          walletAddress,
+          paymentRequest
+        );
+        res.statusCode = 200;
+        res.end(JSON.stringify({ result }));
+      } else {
+        // 传统方式：使用 Agent 权限系统
+        const result = await this.manager.getAgentInterface().executePayment(params);
+        res.statusCode = 200;
+        res.end(JSON.stringify({ result }));
+      }
     } catch (error) {
         res.statusCode = 500;
         res.end(JSON.stringify({ error: (error as Error).message }));
@@ -125,6 +150,54 @@ class MCPServer {
       const records = this.manager.getAuditIntegrator().listAuditRecords(params);
       res.statusCode = 200;
       res.end(JSON.stringify({ result: records }));
+    } catch (error) {
+        res.statusCode = 500;
+        res.end(JSON.stringify({ error: (error as Error).message }));
+      }
+  }
+
+  private handleCreatePolicy(params: any, res: ServerResponse) {
+    try {
+      const { policyId, name, description, rules } = params;
+      this.manager.getSecurityManager().createPolicy(policyId, name, description, rules);
+      res.statusCode = 200;
+      res.end(JSON.stringify({ result: { success: true } }));
+    } catch (error) {
+        res.statusCode = 500;
+        res.end(JSON.stringify({ error: (error as Error).message }));
+      }
+  }
+
+  private handleCreateTemplatePolicy(params: any, res: ServerResponse) {
+    try {
+      const { templateType } = params;
+      const policy = this.manager.createTemplatePolicy(templateType);
+      res.statusCode = 200;
+      res.end(JSON.stringify({ result: policy }));
+    } catch (error) {
+        res.statusCode = 500;
+        res.end(JSON.stringify({ error: (error as Error).message }));
+      }
+  }
+
+  private handleSetBudget(params: any, res: ServerResponse) {
+    try {
+      const { walletAddress, dailyLimit, weeklyLimit } = params;
+      this.manager.getSecurityManager().getBudgetManager().setBudget(walletAddress, dailyLimit, weeklyLimit);
+      res.statusCode = 200;
+      res.end(JSON.stringify({ result: { success: true } }));
+    } catch (error) {
+        res.statusCode = 500;
+        res.end(JSON.stringify({ error: (error as Error).message }));
+      }
+  }
+
+  private handleGetBudget(params: any, res: ServerResponse) {
+    try {
+      const { walletAddress } = params;
+      const budget = this.manager.getSecurityManager().getBudgetManager().getBudget(walletAddress);
+      res.statusCode = 200;
+      res.end(JSON.stringify({ result: budget }));
     } catch (error) {
         res.statusCode = 500;
         res.end(JSON.stringify({ error: (error as Error).message }));

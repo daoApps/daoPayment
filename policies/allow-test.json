@@ -1,0 +1,16 @@
+{
+  "id": "allow-test",
+  "name": "Allow Test",
+  "description": "Allow payments up to 10",
+  "rules": [
+    {
+      "type": "amount",
+      "operator": "lte",
+      "value": 10,
+      "action": "allow",
+      "priority": 1
+    }
+  ],
+  "createdAt": 1775966904732,
+  "updatedAt": 1775966904732
+}

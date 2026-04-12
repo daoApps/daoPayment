@@ -1,0 +1,20 @@
+{
+  "agentId": "perf-test-agent",
+  "taskId": "default",
+  "userId": "default",
+  "recipient": "0x1234567890123456789012345678901234567890",
+  "amount": 5,
+  "token": "ETH",
+  "category": "api",
+  "purpose": "Performance test",
+  "policyHit": [],
+  "signatureMethod": "session-key",
+  "riskLevel": "low",
+  "requiresApproval": false,
+  "approvalStatus": "approved",
+  "status": "failed",
+  "id": "audit-1775969546140-my3wfn39m",
+  "timestamp": 1775969546140,
+  "completedAt": 1775969546141,
+  "error": "Policy denied"
+}

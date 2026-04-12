@@ -98,25 +98,38 @@ class BudgetManager {
     allowed: boolean;
     reason?: string;
   } {
-    const budget = this.budgets.get(walletAddress);
+    let budget = this.budgets.get(walletAddress);
     if (!budget) {
-      return { allowed: false, reason: 'Budget not set' };
+      // Try to load from file if not in memory
+      const budgetPath = path.join(this.storagePath, `${walletAddress}.json`);
+      if (fs.existsSync(budgetPath)) {
+        try {
+          const loadedBudget = JSON.parse(fs.readFileSync(budgetPath, 'utf8'));
+          this.budgets.set(walletAddress, loadedBudget);
+          budget = loadedBudget;
+        } catch (error) {
+          console.error(`Error loading budget from ${budgetPath}:`, error);
+          return { allowed: false, reason: 'Budget not set' };
+        }
+      } else {
+        return { allowed: false, reason: 'Budget not set' };
+      }
     }
 
     this.resetDailyBudgets();
     this.resetWeeklyBudgets();
 
-    if (budget.dailySpent + amount > budget.dailyLimit) {
+    if (budget!.dailySpent + amount > budget!.dailyLimit) {
       return { 
         allowed: false, 
-        reason: `Daily budget exceeded. Spent: ${budget.dailySpent}, Limit: ${budget.dailyLimit}` 
+        reason: `Daily budget exceeded. Spent: ${budget!.dailySpent}, Limit: ${budget!.dailyLimit}` 
       };
     }
 
-    if (budget.weeklySpent + amount > budget.weeklyLimit) {
+    if (budget!.weeklySpent + amount > budget!.weeklyLimit) {
       return { 
         allowed: false, 
-        reason: `Weekly budget exceeded. Spent: ${budget.weeklySpent}, Limit: ${budget.weeklyLimit}` 
+        reason: `Weekly budget exceeded. Spent: ${budget!.weeklySpent}, Limit: ${budget!.weeklyLimit}` 
       };
     }
 

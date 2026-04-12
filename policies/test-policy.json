@@ -1,0 +1,17 @@
+{
+  "id": "test-policy",
+  "name": "Test Policy",
+  "description": "Test policy for payment",
+  "rules": [
+    {
+      "id": "rule-1",
+      "type": "amount",
+      "operator": "gt",
+      "value": 0,
+      "action": "allow",
+      "priority": 10
+    }
+  ],
+  "createdAt": 1775967997938,
+  "updatedAt": 1775967997938
+}

@@ -43,7 +43,7 @@ class Wallet {
 
   private generateAddress(publicKey: string): string {
     const publicKeyObject = crypto.createPublicKey(publicKey);
-    const publicKeyBuffer = publicKeyObject.export({ type: 'spki', format: 'der' });
+    const publicKeyBuffer = Buffer.from(publicKeyObject.export({ type: 'spki', format: 'der' }));
     const hash = crypto.createHash('sha256').update(publicKeyBuffer).digest();
     const address = '0x' + hash.slice(-20).toString('hex');
     return address;

@@ -64,6 +64,9 @@ class SessionKeyManager {
       privateKeyEncoding: { type: 'pkcs8', format: 'pem' }
     });
 
+    // expiration 参数是相对秒数，转换为绝对时间戳
+    const expirationTimestamp = Date.now() + expiration * 1000;
+
     const sessionKey: SessionKey = {
       id: `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       agentId,
@@ -71,7 +74,7 @@ class SessionKeyManager {
       publicKey: publicKey.toString(),
       privateKey: privateKey.toString(),
       permissions,
-      expiration,
+      expiration: expirationTimestamp,
       maxAmount,
       dailyLimit,
       createdAt: Date.now(),

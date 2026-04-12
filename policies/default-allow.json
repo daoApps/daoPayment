@@ -1,0 +1,23 @@
+{
+  "id": "default-allow",
+  "name": "Default Allow",
+  "description": "Default policy that allows everything",
+  "rules": [
+    {
+      "type": "amount",
+      "operator": "gt",
+      "value": 0,
+      "action": "allow",
+      "priority": 10
+    },
+    {
+      "type": "category",
+      "operator": "eq",
+      "value": "api",
+      "action": "allow",
+      "priority": 5
+    }
+  ],
+  "createdAt": 1775967117364,
+  "updatedAt": 1775967117364
+}

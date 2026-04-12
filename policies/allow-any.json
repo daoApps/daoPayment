@@ -1,0 +1,16 @@
+{
+  "id": "allow-any",
+  "name": "Allow Any",
+  "description": "Allow any payment",
+  "rules": [
+    {
+      "type": "amount",
+      "operator": "gt",
+      "value": 0,
+      "action": "allow",
+      "priority": 10
+    }
+  ],
+  "createdAt": 1775967077177,
+  "updatedAt": 1775967077177
+}

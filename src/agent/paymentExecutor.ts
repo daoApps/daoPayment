@@ -10,6 +10,7 @@ interface PaymentRequest {
   category: string;
   purpose: string;
   permissionId: string;
+  policyId?: string;
 }
 
 interface PaymentResult {
@@ -32,8 +33,9 @@ class PaymentExecutor {
     paymentRequest: PaymentRequest
   ): Promise<PaymentResult> {
     // 1. 检查安全策略
+    const policyId = paymentRequest.policyId || paymentRequest.walletAddress;
     const securityCheck = this.securityManager.checkSecurity(
-      paymentRequest.walletAddress,
+      policyId,
       paymentRequest.walletAddress,
       paymentRequest.amount,
       paymentRequest.recipient,

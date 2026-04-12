@@ -153,7 +153,7 @@ class MainManager {
     );
   }
 
-  executePaymentWithSessionKey(
+  async executePaymentWithSessionKey(
     sessionKeyId: string,
     walletAddress: string,
     paymentRequest: any
@@ -162,11 +162,17 @@ class MainManager {
     if (!wallet) {
       throw new Error('Wallet not found');
     }
-    return this.sessionKeyIntegrator.executePaymentWithSessionKey(
+    // Create audit record before payment
+    const auditId = this.auditIntegrator.createPaymentAudit(paymentRequest);
+    // Execute payment
+    const result = await this.sessionKeyIntegrator.executePaymentWithSessionKey(
       sessionKeyId,
       wallet,
       paymentRequest
     );
+    // Update audit record with result
+    this.auditIntegrator.updatePaymentAudit(auditId.id, result);
+    return { ...result, auditId: auditId.id };
   }
 
   revokeSessionKey(sessionKeyId: string): boolean {

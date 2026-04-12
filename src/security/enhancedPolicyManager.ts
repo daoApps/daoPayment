@@ -109,6 +109,14 @@ class EnhancedPolicyManager {
             value: ['personal_transfer'],
             action: 'deny',
             priority: 8
+          },
+          {
+            id: 'rule-4',
+            type: 'amount',
+            operator: 'gt',
+            value: 0,
+            action: 'allow',
+            priority: 1
           }
         ];
         break;
@@ -139,6 +147,14 @@ class EnhancedPolicyManager {
             value: ['api', 'storage', 'compute'],
             action: 'deny',
             priority: 8
+          },
+          {
+            id: 'rule-4',
+            type: 'amount',
+            operator: 'gt',
+            value: 0,
+            action: 'allow',
+            priority: 1
           }
         ];
         break;
@@ -161,6 +177,14 @@ class EnhancedPolicyManager {
             value: 500,
             action: 'require_approval',
             priority: 9
+          },
+          {
+            id: 'rule-3',
+            type: 'amount',
+            operator: 'gt',
+            value: 0,
+            action: 'allow',
+            priority: 1
           }
         ];
         break;
