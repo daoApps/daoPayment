@@ -52,37 +52,49 @@ class WhitelistManager {
       recipients,
       tokens,
       categories,
-      methods
+      methods,
     };
     this.whitelists.set(whitelistId, whitelist);
     this.saveWhitelist(whitelistId, whitelist);
   }
 
-  addToWhitelist(whitelistId: string, type: keyof Whitelist, items: string[]): boolean {
+  addToWhitelist(
+    whitelistId: string,
+    type: keyof Whitelist,
+    items: string[]
+  ): boolean {
     const whitelist = this.whitelists.get(whitelistId);
     if (!whitelist) {
       return false;
     }
 
     const existingItems = whitelist[type];
-    const newItems = items.filter(item => !existingItems.includes(item));
+    const newItems = items.filter((item) => !existingItems.includes(item));
     whitelist[type] = [...existingItems, ...newItems];
     this.saveWhitelist(whitelistId, whitelist);
     return true;
   }
 
-  removeFromWhitelist(whitelistId: string, type: keyof Whitelist, items: string[]): boolean {
+  removeFromWhitelist(
+    whitelistId: string,
+    type: keyof Whitelist,
+    items: string[]
+  ): boolean {
     const whitelist = this.whitelists.get(whitelistId);
     if (!whitelist) {
       return false;
     }
 
-    whitelist[type] = whitelist[type].filter(item => !items.includes(item));
+    whitelist[type] = whitelist[type].filter((item) => !items.includes(item));
     this.saveWhitelist(whitelistId, whitelist);
     return true;
   }
 
-  checkWhitelist(whitelistId: string, type: keyof Whitelist, item: string): boolean {
+  checkWhitelist(
+    whitelistId: string,
+    type: keyof Whitelist,
+    item: string
+  ): boolean {
     const whitelist = this.whitelists.get(whitelistId);
     if (!whitelist) {
       return false;

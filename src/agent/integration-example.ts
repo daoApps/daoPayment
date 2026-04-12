@@ -21,8 +21,8 @@ async function main() {
     const createWalletResponse = await axios.post(MCP_SERVER_URL, {
       toolcall: {
         name: 'createWallet',
-        params: {}
-      }
+        params: {},
+      },
     });
     const walletAddress = createWalletResponse.data.result.walletAddress;
     console.log(`Created wallet with address: ${walletAddress}`);
@@ -33,9 +33,9 @@ async function main() {
       toolcall: {
         name: 'getWalletBalance',
         params: {
-          walletAddress
-        }
-      }
+          walletAddress,
+        },
+      },
     });
     const balance = balanceResponse.data.result.balance;
     console.log(`Wallet balance: ${balance} USDC`);
@@ -51,13 +51,15 @@ async function main() {
           permissions: ['transfer'],
           expiration: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
           maxAmount: 5,
-          dailyLimit: 20
-        }
-      }
+          dailyLimit: 20,
+        },
+      },
     });
     const sessionKey = sessionKeyResponse.data.result;
     console.log(`Generated session key with ID: ${sessionKey.id}`);
-    console.log(`Session key expires at: ${new Date(sessionKey.expiration).toISOString()}`);
+    console.log(
+      `Session key expires at: ${new Date(sessionKey.expiration).toISOString()}`
+    );
 
     // 4. 执行支付
     console.log('\n4. Executing payment...');
@@ -72,12 +74,14 @@ async function main() {
           token: 'USDC',
           category: 'api',
           purpose: 'API payment for service',
-          permissionId: 'default'
-        }
-      }
+          permissionId: 'default',
+        },
+      },
     });
     const paymentResult = paymentResponse.data.result;
-    console.log(`Payment result: ${paymentResult.success ? 'Success' : 'Failed'}`);
+    console.log(
+      `Payment result: ${paymentResult.success ? 'Success' : 'Failed'}`
+    );
     if (paymentResult.success) {
       console.log(`Transaction hash: ${paymentResult.txHash}`);
     } else {
@@ -90,9 +94,9 @@ async function main() {
       toolcall: {
         name: 'listAuditRecords',
         params: {
-          agentId: AGENT_ID
-        }
-      }
+          agentId: AGENT_ID,
+        },
+      },
     });
     const auditRecords = auditResponse.data.result;
     console.log(`Found ${auditRecords.length} audit records`);
@@ -100,7 +104,6 @@ async function main() {
       console.log('Latest audit record:');
       console.log(JSON.stringify(auditRecords[0], null, 2));
     }
-
   } catch (error) {
     console.error('Error:', (error as Error).message);
   }

@@ -18,14 +18,14 @@ class MCPServer {
 
     if (req.method === 'POST') {
       let body = '';
-      req.on('data', chunk => {
+      req.on('data', (chunk: Buffer) => {
         body += chunk.toString();
       });
       req.on('end', () => {
         try {
           const request = JSON.parse(body);
           this.handleMCPRequest(request, res);
-        } catch (error) {
+        } catch (_error) {
           res.statusCode = 400;
           res.end(JSON.stringify({ error: 'Invalid JSON' }));
         }
@@ -85,21 +85,23 @@ class MCPServer {
       res.statusCode = 200;
       res.end(JSON.stringify({ result: { walletAddress } }));
     } catch (error) {
-        res.statusCode = 500;
-        res.end(JSON.stringify({ error: (error as Error).message }));
-      }
+      res.statusCode = 500;
+      res.end(JSON.stringify({ error: (error as Error).message }));
+    }
   }
 
   private async handleGetWalletBalance(params: any, res: ServerResponse) {
     try {
       const { walletAddress } = params;
-      const balance = await this.manager.getAgentInterface().getWalletBalance(walletAddress);
+      const balance = await this.manager
+        .getAgentInterface()
+        .getWalletBalance(walletAddress);
       res.statusCode = 200;
       res.end(JSON.stringify({ result: { balance } }));
     } catch (error) {
-        res.statusCode = 500;
-        res.end(JSON.stringify({ error: (error as Error).message }));
-      }
+      res.statusCode = 500;
+      res.end(JSON.stringify({ error: (error as Error).message }));
+    }
   }
 
   private async handleExecutePayment(params: any, res: ServerResponse) {
@@ -116,19 +118,28 @@ class MCPServer {
         res.end(JSON.stringify({ result }));
       } else {
         // 传统方式：使用 Agent 权限系统
-        const result = await this.manager.getAgentInterface().executePayment(params);
+        const result = await this.manager
+          .getAgentInterface()
+          .executePayment(params);
         res.statusCode = 200;
         res.end(JSON.stringify({ result }));
       }
     } catch (error) {
-        res.statusCode = 500;
-        res.end(JSON.stringify({ error: (error as Error).message }));
-      }
+      res.statusCode = 500;
+      res.end(JSON.stringify({ error: (error as Error).message }));
+    }
   }
 
   private handleGenerateSessionKey(params: any, res: ServerResponse) {
     try {
-      const { agentId, walletAddress, permissions, expiration, maxAmount, dailyLimit } = params;
+      const {
+        agentId,
+        walletAddress,
+        permissions,
+        expiration,
+        maxAmount,
+        dailyLimit,
+      } = params;
       const sessionKey = this.manager.generateSessionKey(
         agentId,
         walletAddress,
@@ -140,32 +151,36 @@ class MCPServer {
       res.statusCode = 200;
       res.end(JSON.stringify({ result: sessionKey }));
     } catch (error) {
-        res.statusCode = 500;
-        res.end(JSON.stringify({ error: (error as Error).message }));
-      }
+      res.statusCode = 500;
+      res.end(JSON.stringify({ error: (error as Error).message }));
+    }
   }
 
   private handleListAuditRecords(params: any, res: ServerResponse) {
     try {
-      const records = this.manager.getAuditIntegrator().listAuditRecords(params);
+      const records = this.manager
+        .getAuditIntegrator()
+        .listAuditRecords(params);
       res.statusCode = 200;
       res.end(JSON.stringify({ result: records }));
     } catch (error) {
-        res.statusCode = 500;
-        res.end(JSON.stringify({ error: (error as Error).message }));
-      }
+      res.statusCode = 500;
+      res.end(JSON.stringify({ error: (error as Error).message }));
+    }
   }
 
   private handleCreatePolicy(params: any, res: ServerResponse) {
     try {
       const { policyId, name, description, rules } = params;
-      this.manager.getSecurityManager().createPolicy(policyId, name, description, rules);
+      this.manager
+        .getSecurityManager()
+        .createPolicy(policyId, name, description, rules);
       res.statusCode = 200;
       res.end(JSON.stringify({ result: { success: true } }));
     } catch (error) {
-        res.statusCode = 500;
-        res.end(JSON.stringify({ error: (error as Error).message }));
-      }
+      res.statusCode = 500;
+      res.end(JSON.stringify({ error: (error as Error).message }));
+    }
   }
 
   private handleCreateTemplatePolicy(params: any, res: ServerResponse) {
@@ -175,33 +190,39 @@ class MCPServer {
       res.statusCode = 200;
       res.end(JSON.stringify({ result: policy }));
     } catch (error) {
-        res.statusCode = 500;
-        res.end(JSON.stringify({ error: (error as Error).message }));
-      }
+      res.statusCode = 500;
+      res.end(JSON.stringify({ error: (error as Error).message }));
+    }
   }
 
   private handleSetBudget(params: any, res: ServerResponse) {
     try {
       const { walletAddress, dailyLimit, weeklyLimit } = params;
-      this.manager.getSecurityManager().getBudgetManager().setBudget(walletAddress, dailyLimit, weeklyLimit);
+      this.manager
+        .getSecurityManager()
+        .getBudgetManager()
+        .setBudget(walletAddress, dailyLimit, weeklyLimit);
       res.statusCode = 200;
       res.end(JSON.stringify({ result: { success: true } }));
     } catch (error) {
-        res.statusCode = 500;
-        res.end(JSON.stringify({ error: (error as Error).message }));
-      }
+      res.statusCode = 500;
+      res.end(JSON.stringify({ error: (error as Error).message }));
+    }
   }
 
   private handleGetBudget(params: any, res: ServerResponse) {
     try {
       const { walletAddress } = params;
-      const budget = this.manager.getSecurityManager().getBudgetManager().getBudget(walletAddress);
+      const budget = this.manager
+        .getSecurityManager()
+        .getBudgetManager()
+        .getBudget(walletAddress);
       res.statusCode = 200;
       res.end(JSON.stringify({ result: budget }));
     } catch (error) {
-        res.statusCode = 500;
-        res.end(JSON.stringify({ error: (error as Error).message }));
-      }
+      res.statusCode = 500;
+      res.end(JSON.stringify({ error: (error as Error).message }));
+    }
   }
 
   stop() {

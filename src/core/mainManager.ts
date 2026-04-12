@@ -1,12 +1,12 @@
-import WalletManager from './walletManager';
-import RecoveryManager from './recoveryManager';
-import PermissionManager from './permissionManager';
-import SessionKeyManager from './sessionKeyManager';
-import SessionKeyIntegrator from './sessionKeyIntegrator';
-import SecurityManager from '../security/securityManager';
-import AuditIntegrator from '../audit/auditIntegrator';
-import AgentInterface from '../agent/agentInterface';
-import PaymentExecutor from '../agent/paymentExecutor';
+import WalletManager from './walletManager.js';
+import RecoveryManager from './recoveryManager.js';
+import PermissionManager from './permissionManager.js';
+import SessionKeyManager from './sessionKeyManager.js';
+import SessionKeyIntegrator from './sessionKeyIntegrator.js';
+import SecurityManager from '../security/securityManager.js';
+import AuditIntegrator from '../audit/auditIntegrator.js';
+import AgentInterface from '../agent/agentInterface.js';
+import PaymentExecutor from '../agent/paymentExecutor.js';
 
 class MainManager {
   private walletManager: WalletManager;
@@ -27,7 +27,10 @@ class MainManager {
     this.auditIntegrator = new AuditIntegrator();
     const paymentExecutor = new PaymentExecutor(this.securityManager);
     this.sessionKeyIntegrator = new SessionKeyIntegrator(paymentExecutor);
-    this.agentInterface = new AgentInterface(encryptionKey, this.securityManager);
+    this.agentInterface = new AgentInterface(
+      encryptionKey,
+      this.securityManager
+    );
   }
 
   // 钱包管理

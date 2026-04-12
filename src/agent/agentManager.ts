@@ -1,4 +1,4 @@
-import AuthorizationManager from '../core/authorizationManager';
+import AuthorizationManager from '../core/authorizationManager.js';
 
 interface Agent {
   id: string;
@@ -24,7 +24,7 @@ class AgentManager {
       description,
       permissions: [],
       createdAt: Date.now(),
-      lastUsed: Date.now()
+      lastUsed: Date.now(),
     };
     this.agents.set(id, agent);
   }
@@ -63,9 +63,18 @@ class AgentManager {
     );
   }
 
-  checkPermission(agentId: string, permissionId: string, action: string, amount: number): boolean {
+  checkPermission(
+    agentId: string,
+    permissionId: string,
+    action: string,
+    amount: number
+  ): boolean {
     this.updateAgentLastUsed(agentId);
-    return this.authorizationManager.checkPermission(permissionId, action, amount);
+    return this.authorizationManager.checkPermission(
+      permissionId,
+      action,
+      amount
+    );
   }
 
   revokePermission(permissionId: string): boolean {

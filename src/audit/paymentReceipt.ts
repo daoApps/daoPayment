@@ -1,4 +1,4 @@
-import AuditRecord from './auditRecord';
+import AuditRecord from './auditRecord.js';
 
 interface PaymentReceipt {
   receiptId: string;
@@ -25,7 +25,10 @@ interface PaymentReceipt {
 }
 
 class PaymentReceiptGenerator {
-  generateReceipt(auditRecord: AuditRecord, network: string = 'monad-testnet'): PaymentReceipt {
+  generateReceipt(
+    auditRecord: AuditRecord,
+    network: string = 'monad-testnet'
+  ): PaymentReceipt {
     return {
       receiptId: `receipt-${auditRecord.id}`,
       transactionId: auditRecord.txHash || auditRecord.id,
@@ -45,7 +48,7 @@ class PaymentReceiptGenerator {
       status: auditRecord.status,
       timestamp: auditRecord.timestamp,
       completedAt: auditRecord.completedAt,
-      network
+      network,
     };
   }
 

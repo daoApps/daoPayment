@@ -1,10 +1,10 @@
 /**
  * Agent Environment Connection Test
- * 
+ *
  * This script tests the connection between Agent environment and Monad Agentic Payment MCP server.
  * It verifies:
  * 1. Network connectivity
- * 2. API endpoint accessibility  
+ * 2. API endpoint accessibility
  * 3. Request/response format compatibility
  * 4. Full end-to-end workflow: create wallet → generate session key → execute payment → list audit records
  */
@@ -20,7 +20,10 @@ interface MCPRequest {
   };
 }
 
-async function callMCP<TResult = any>(toolName: string, params: any): Promise<TResult> {
+async function callMCP<TResult = any>(
+  toolName: string,
+  params: any
+): Promise<TResult> {
   const response = await axios.post(MCP_SERVER_URL, {
     toolcall: {
       name: toolName,
@@ -29,7 +32,9 @@ async function callMCP<TResult = any>(toolName: string, params: any): Promise<TR
   } as MCPRequest);
 
   if (response.status !== 200) {
-    throw new Error(`MCP call failed: ${response.status} ${response.statusText}`);
+    throw new Error(
+      `MCP call failed: ${response.status} ${response.statusText}`
+    );
   }
 
   if (response.data.error) {
@@ -46,7 +51,10 @@ async function testAgentConnection() {
     // Test 1: Check connectivity
     console.log('📡 Test 1: Checking network connectivity...');
     // We'll test by creating a wallet
-    const createWalletResult = await callMCP<{ walletAddress: string }>('createWallet', {});
+    const createWalletResult = await callMCP<{ walletAddress: string }>(
+      'createWallet',
+      {}
+    );
     const walletAddress = createWalletResult.walletAddress;
     console.log(`✅ Wallet created: ${walletAddress}\n`);
 
@@ -93,7 +101,9 @@ async function testAgentConnection() {
     // Test 5: Verify budget
     console.log('🧾 Test 5: Verifying budget configuration...');
     const budget = await callMCP('getBudget', { walletAddress });
-    console.log(`✅ Budget verified: dailyLimit=${budget.dailyLimit}, dailySpent=${budget.dailySpent}\n`);
+    console.log(
+      `✅ Budget verified: dailyLimit=${budget.dailyLimit}, dailySpent=${budget.dailySpent}\n`
+    );
 
     // Test 6: List audit records
     console.log('📝 Test 6: Listing audit records...');
@@ -101,13 +111,12 @@ async function testAgentConnection() {
     console.log(`✅ Found ${auditRecords.length} audit record(s)\n`);
 
     console.log('🎉 All tests completed successfully!');
-    console.log('=' );
+    console.log('=');
     console.log('✅ Agent environment configuration is valid');
     console.log('✅ Network connection is stable');
     console.log('✅ Permission settings are properly configured');
     console.log('✅ Data interaction format is compatible');
-    console.log('=' );
-
+    console.log('=');
   } catch (error) {
     console.error('❌ Test failed:', (error as Error).message);
     console.error('\nTroubleshooting tips:');

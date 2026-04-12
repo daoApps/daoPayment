@@ -1,4 +1,4 @@
-import SecureStorage from './secureStorage';
+import SecureStorage from './secureStorage.js';
 
 interface AgentPermission {
   agentId: string;
@@ -14,7 +14,10 @@ class AuthorizationManager {
   private permissions: Map<string, AgentPermission> = new Map();
 
   constructor(encryptionKey: string) {
-    this.secureStorage = new SecureStorage(encryptionKey, './secure-storage/permissions');
+    this.secureStorage = new SecureStorage(
+      encryptionKey,
+      './secure-storage/permissions'
+    );
     this.loadPermissions();
   }
 
@@ -38,14 +41,18 @@ class AuthorizationManager {
       permissions,
       expiration,
       maxAmount,
-      dailyLimit
+      dailyLimit,
     };
     this.permissions.set(permissionId, permission);
     // 在实际实现中，这里应该将权限存储到安全存储中
     return permissionId;
   }
 
-  checkPermission(permissionId: string, action: string, amount: number): boolean {
+  checkPermission(
+    permissionId: string,
+    action: string,
+    amount: number
+  ): boolean {
     const permission = this.permissions.get(permissionId);
     if (!permission) {
       return false;
@@ -65,7 +72,7 @@ class AuthorizationManager {
     }
 
     // 这里应该检查每日限额，简化实现
-    
+
     return true;
   }
 
@@ -74,7 +81,9 @@ class AuthorizationManager {
   }
 
   getAgentPermissions(agentId: string): AgentPermission[] {
-    return Array.from(this.permissions.values()).filter(p => p.agentId === agentId);
+    return Array.from(this.permissions.values()).filter(
+      (p) => p.agentId === agentId
+    );
   }
 
   clearExpiredPermissions(): void {

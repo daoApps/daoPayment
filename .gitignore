@@ -68,6 +68,12 @@ tramp
 .atom/
 *.dump
 
+# ==================== Next.js ====================
+.next/
+.next/types/**/*.ts
+out/
+.next/cache/
+
 # ==================== 依赖目录 ====================
 # Node.js
 node_modules/

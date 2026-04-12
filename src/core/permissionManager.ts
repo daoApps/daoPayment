@@ -1,4 +1,4 @@
-import AuthorizationManager from './authorizationManager';
+import AuthorizationManager from './authorizationManager.js';
 
 interface Permission {
   id: string;
@@ -47,7 +47,7 @@ class PermissionManager {
       maxAmount,
       dailyLimit,
       createdAt: Date.now(),
-      lastUsed: Date.now()
+      lastUsed: Date.now(),
     };
 
     this.permissions.set(permissionId, permission);
@@ -87,7 +87,7 @@ class PermissionManager {
       ...permission,
       ...updates,
       id: newPermissionId,
-      lastUsed: Date.now()
+      lastUsed: Date.now(),
     };
 
     this.permissions.delete(permissionId);
@@ -112,20 +112,32 @@ class PermissionManager {
 
   // 获取 Agent 的所有权限
   getAgentPermissions(agentId: string): Permission[] {
-    return Array.from(this.permissions.values()).filter(p => p.agentId === agentId);
+    return Array.from(this.permissions.values()).filter(
+      (p) => p.agentId === agentId
+    );
   }
 
   // 获取钱包的所有权限
   getWalletPermissions(walletAddress: string): Permission[] {
-    return Array.from(this.permissions.values()).filter(p => p.walletAddress === walletAddress);
+    return Array.from(this.permissions.values()).filter(
+      (p) => p.walletAddress === walletAddress
+    );
   }
 
   // 检查权限
-  checkPermission(permissionId: string, action: string, amount: number): boolean {
+  checkPermission(
+    permissionId: string,
+    action: string,
+    amount: number
+  ): boolean {
     const permission = this.permissions.get(permissionId);
     if (permission) {
       permission.lastUsed = Date.now();
-      return this.authorizationManager.checkPermission(permissionId, action, amount);
+      return this.authorizationManager.checkPermission(
+        permissionId,
+        action,
+        amount
+      );
     }
     return false;
   }

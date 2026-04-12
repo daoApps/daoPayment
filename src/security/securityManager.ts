@@ -1,6 +1,6 @@
-import BudgetManager from './budgetManager';
-import WhitelistManager from './whitelistManager';
-import EnhancedPolicyManager from './enhancedPolicyManager';
+import BudgetManager from './budgetManager.js';
+import WhitelistManager from './whitelistManager.js';
+import EnhancedPolicyManager from './enhancedPolicyManager.js';
 
 class SecurityManager {
   private policyManager: EnhancedPolicyManager;
@@ -49,14 +49,14 @@ class SecurityManager {
       recipient,
       token,
       method,
-      time: Date.now()
+      time: Date.now(),
     });
 
     if (policyCheck.action === 'deny') {
       return {
         allowed: false,
         reason: 'Policy denied',
-        requiresHumanApproval: false
+        requiresHumanApproval: false,
       };
     }
 
@@ -66,7 +66,7 @@ class SecurityManager {
       return {
         allowed: false,
         reason: budgetCheck.reason,
-        requiresHumanApproval: false
+        requiresHumanApproval: false,
       };
     }
 
@@ -75,7 +75,7 @@ class SecurityManager {
 
     return {
       allowed: true,
-      requiresHumanApproval: policyCheck.action === 'require_approval'
+      requiresHumanApproval: policyCheck.action === 'require_approval',
     };
   }
 
@@ -101,7 +101,11 @@ class SecurityManager {
     );
   }
 
-  addToWhitelist(whitelistId: string, type: 'recipients' | 'tokens' | 'categories' | 'methods', items: string[]): boolean {
+  addToWhitelist(
+    whitelistId: string,
+    type: 'recipients' | 'tokens' | 'categories' | 'methods',
+    items: string[]
+  ): boolean {
     return this.whitelistManager.addToWhitelist(whitelistId, type, items);
   }
 

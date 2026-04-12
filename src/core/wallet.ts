@@ -1,87 +1,116 @@
-// import { MPP } from '@monad-crypto/mpp';
-import * as crypto from 'crypto';
+import { monad } from '../../node_modules/@monad-crypto/mpp/packages/mpp/dist/client/index.js';
+import { privateKeyToAccount, generatePrivateKey } from 'viem/accounts';
 import * as fs from 'fs';
-import * as path from 'path';
+import type { LocalAccount } from 'viem/accounts';
 
 class Wallet {
-  private privateKey: string;
-  private publicKey: string;
-  private address: string;
-  // private mpp: MPP;
+  private account: LocalAccount;
+  private charge: ReturnType<typeof monad.charge>;
 
-  constructor(privateKey?: string) {
+  constructor(privateKey?: `0x${string}`) {
     if (privateKey) {
-      this.privateKey = privateKey;
-      this.publicKey = this.generatePublicKey(privateKey);
-      this.address = this.generateAddress(this.publicKey);
+      this.account = privateKeyToAccount(privateKey);
     } else {
-      const keys = this.generateKeyPair();
-      this.privateKey = keys.privateKey;
-      this.publicKey = keys.publicKey;
-      this.address = this.generateAddress(keys.publicKey);
+      const newPrivateKey = generatePrivateKey();
+      this.account = privateKeyToAccount(newPrivateKey);
     }
-    
-    // this.mpp = new MPP({
-    //   network: 'testnet',
-    //   privateKey: this.privateKey
-    // });
-  }
 
-  private generateKeyPair(): { privateKey: string; publicKey: string } {
-    const { privateKey, publicKey } = crypto.generateKeyPairSync('ec', {
-      namedCurve: 'secp256k1',
-      publicKeyEncoding: { type: 'spki', format: 'pem' },
-      privateKeyEncoding: { type: 'pkcs8', format: 'pem' }
+    this.charge = monad.charge({
+      account: this.account as any,
+      mode: 'pull',
     });
-    return { privateKey, publicKey };
   }
 
-  private generatePublicKey(privateKey: string): string {
-    const keyObject = crypto.createPrivateKey(privateKey);
-    return keyObject.export({ type: 'spki', format: 'pem' }).toString();
-  }
-
-  private generateAddress(publicKey: string): string {
-    const publicKeyObject = crypto.createPublicKey(publicKey);
-    const publicKeyBuffer = Buffer.from(publicKeyObject.export({ type: 'spki', format: 'der' }));
-    const hash = crypto.createHash('sha256').update(publicKeyBuffer).digest();
-    const address = '0x' + hash.slice(-20).toString('hex');
-    return address;
-  }
-
-  getAddress(): string {
-    return this.address;
+  getAddress(): `0x${string}` {
+    return this.account.address;
   }
 
   getPublicKey(): string {
-    return this.publicKey;
+    return (this.account as any).publicKey || '';
   }
 
-  async getBalance(): Promise<number> {
+  getPrivateKey(): `0x${string}` {
+    return (this.account as any).privateKey;
+  }
+
+  getAccount(): LocalAccount {
+    return this.account;
+  }
+
+  getChargeClient() {
+    return this.charge;
+  }
+
+  async getBalance(): Promise<bigint> {
     try {
-      // 模拟余额
-      return 1000;
+      const client =
+        (await (this.charge as any).parameters?.getClient?.({
+          chainId: 10143,
+        })) || this.getDefaultClient(10143);
+      const balance = await client.getBalance({
+        address: this.account.address,
+      });
+      return balance;
     } catch (error) {
       console.error('Error getting balance:', error);
-      return 0;
+      return 0n;
     }
   }
 
-  async sendTransaction(to: string, amount: number): Promise<string> {
+  async sendTransaction(
+    to: `0x${string}`,
+    amount: bigint,
+    currency?: `0x${string}`
+  ): Promise<`0x${string}`> {
     try {
-      // 模拟交易哈希
-      return `0x${crypto.randomBytes(32).toString('hex')}`;
+      const credential = await (this.charge as any).createCredential({
+        challenge: {
+          request: {
+            recipient: to,
+            amount: amount.toString(),
+            currency: currency || '0x0000000000000000000000000000000000000000',
+            chainId: 10143,
+          },
+        },
+        context: {
+          account: this.account,
+        },
+      });
+      return credential as `0x${string}`;
     } catch (error) {
       console.error('Error sending transaction:', error);
       throw error;
     }
   }
 
+  private async getDefaultClient(chainId: number) {
+    const { createClient, http } = await import('viem');
+    const { monad } = await import('viem/chains');
+    const defaultChain =
+      monad.id === chainId
+        ? monad
+        : {
+            id: chainId,
+            name: `Chain ${chainId}`,
+            nativeCurrency: {
+              name: 'Ethereum',
+              symbol: 'ETH',
+              decimals: 18,
+            },
+            rpcUrls: {
+              default: {
+                http: [`https://rpc.chain${chainId}.xyz`],
+              },
+            },
+          };
+    const url = `https://rpc.monad.xyz`;
+    return createClient({ chain: defaultChain, transport: http(url) });
+  }
+
   saveToFile(filePath: string): void {
     const walletData = {
-      privateKey: this.privateKey,
-      publicKey: this.publicKey,
-      address: this.address
+      privateKey: (this.account as any).privateKey,
+      address: this.account.address,
     };
     fs.writeFileSync(filePath, JSON.stringify(walletData, null, 2));
   }
@@ -91,7 +120,7 @@ class Wallet {
       throw new Error('Wallet file not found');
     }
     const walletData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-    return new Wallet(walletData.privateKey);
+    return new Wallet(walletData.privateKey as `0x${string}`);
   }
 }
 

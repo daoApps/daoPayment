@@ -1,4 +1,4 @@
-import AuditRecord from './auditRecord';
+import AuditRecord from './auditRecord.js';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -38,15 +38,18 @@ class AuditManager {
     const newRecord: AuditRecord = {
       ...record,
       id: `audit-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
     this.records.push(newRecord);
     this.saveRecord(newRecord);
     return newRecord;
   }
 
-  updateRecord(id: string, updates: Partial<AuditRecord>): AuditRecord | undefined {
-    const index = this.records.findIndex(record => record.id === id);
+  updateRecord(
+    id: string,
+    updates: Partial<AuditRecord>
+  ): AuditRecord | undefined {
+    const index = this.records.findIndex((record) => record.id === id);
     if (index === -1) {
       return undefined;
     }
@@ -56,7 +59,7 @@ class AuditManager {
   }
 
   getRecord(id: string): AuditRecord | undefined {
-    return this.records.find(record => record.id === id);
+    return this.records.find((record) => record.id === id);
   }
 
   listRecords(filters?: {
@@ -70,19 +73,29 @@ class AuditManager {
 
     if (filters) {
       if (filters.agentId) {
-        filteredRecords = filteredRecords.filter(record => record.agentId === filters.agentId);
+        filteredRecords = filteredRecords.filter(
+          (record) => record.agentId === filters.agentId
+        );
       }
       if (filters.walletAddress) {
-        filteredRecords = filteredRecords.filter(record => record.walletAddress === filters.walletAddress);
+        filteredRecords = filteredRecords.filter(
+          (record) => record.walletAddress === filters.walletAddress
+        );
       }
       if (filters.status) {
-        filteredRecords = filteredRecords.filter(record => record.status === filters.status);
+        filteredRecords = filteredRecords.filter(
+          (record) => record.status === filters.status
+        );
       }
       if (filters.startTime !== undefined) {
-        filteredRecords = filteredRecords.filter(record => record.timestamp >= filters.startTime!);
+        filteredRecords = filteredRecords.filter(
+          (record) => record.timestamp >= filters.startTime!
+        );
       }
       if (filters.endTime !== undefined) {
-        filteredRecords = filteredRecords.filter(record => record.timestamp <= filters.endTime!);
+        filteredRecords = filteredRecords.filter(
+          (record) => record.timestamp <= filters.endTime!
+        );
       }
     }
 
@@ -90,7 +103,7 @@ class AuditManager {
   }
 
   deleteRecord(id: string): boolean {
-    const index = this.records.findIndex(record => record.id === id);
+    const index = this.records.findIndex((record) => record.id === id);
     if (index === -1) {
       return false;
     }
@@ -102,7 +115,10 @@ class AuditManager {
     return true;
   }
 
-  generateReport(startTime: number, endTime: number): {
+  generateReport(
+    startTime: number,
+    endTime: number
+  ): {
     totalPayments: number;
     totalAmount: number;
     successfulPayments: number;
@@ -119,12 +135,12 @@ class AuditManager {
       failedPayments: 0,
       pendingPayments: 0,
       byAgent: {} as Record<string, number>,
-      byCategory: {} as Record<string, number>
+      byCategory: {} as Record<string, number>,
     };
 
     for (const record of records) {
       report.totalAmount += record.amount;
-      
+
       if (record.status === 'completed') {
         report.successfulPayments++;
       } else if (record.status === 'failed') {

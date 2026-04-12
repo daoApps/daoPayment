@@ -1,8 +1,8 @@
-import AgentManager from './agentManager';
-import PaymentExecutor from './paymentExecutor';
-import WalletManager from '../core/walletManager';
-import SecurityManager from '../security/securityManager';
-import { PaymentRequest, PaymentResult } from './paymentExecutor';
+import AgentManager from './agentManager.js';
+import PaymentExecutor from './paymentExecutor.js';
+import WalletManager from '../core/walletManager.js';
+import SecurityManager from '../security/securityManager.js';
+import { PaymentRequest, PaymentResult } from './paymentExecutor.js';
 
 class AgentInterface {
   private agentManager: AgentManager;
@@ -10,10 +10,7 @@ class AgentInterface {
   private walletManager: WalletManager;
   private securityManager: SecurityManager;
 
-  constructor(
-    encryptionKey: string,
-    securityManager: SecurityManager
-  ) {
+  constructor(encryptionKey: string, securityManager: SecurityManager) {
     this.agentManager = new AgentManager(encryptionKey);
     this.paymentExecutor = new PaymentExecutor(securityManager);
     this.walletManager = new WalletManager();
@@ -57,7 +54,7 @@ class AgentInterface {
     if (!hasPermission) {
       return {
         success: false,
-        error: 'Agent does not have permission to execute this payment'
+        error: 'Agent does not have permission to execute this payment',
       };
     }
 
@@ -66,7 +63,7 @@ class AgentInterface {
     if (!wallet) {
       return {
         success: false,
-        error: 'Wallet not found'
+        error: 'Wallet not found',
       };
     }
 
@@ -75,11 +72,13 @@ class AgentInterface {
   }
 
   // 检查支付状态
-  async checkPaymentStatus(txHash: string): Promise<{ status: string; blockNumber?: number }> {
+  async checkPaymentStatus(
+    _txHash: string
+  ): Promise<{ status: string; blockNumber?: number }> {
     // 这里应该实现查询交易状态的逻辑
     // 简化实现，返回模拟数据
     return {
-      status: 'pending'
+      status: 'pending',
     };
   }
 
@@ -94,7 +93,8 @@ class AgentInterface {
     if (!wallet) {
       return 0;
     }
-    return wallet.getBalance();
+    const balance = await wallet.getBalance();
+    return Number(balance);
   }
 
   // 创建新钱包

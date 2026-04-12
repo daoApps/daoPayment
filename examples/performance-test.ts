@@ -1,6 +1,6 @@
 /**
  * Performance Test for Monad Agentic Payment System
- * 
+ *
  * Tests:
  * 1. Payment execution response time (< 5 seconds requirement)
  * 2. Multiple consecutive operations performance
@@ -19,7 +19,10 @@ interface PerformanceResult {
   error?: string;
 }
 
-async function callMCP<TResult = any>(toolName: string, params: any): Promise<TResult> {
+async function callMCP<TResult = any>(
+  toolName: string,
+  params: any
+): Promise<TResult> {
   const response = await axios.post(MCP_SERVER_URL, {
     toolcall: {
       name: toolName,
@@ -28,7 +31,9 @@ async function callMCP<TResult = any>(toolName: string, params: any): Promise<TR
   });
 
   if (response.status !== 200) {
-    throw new Error(`MCP call failed: ${response.status} ${response.statusText}`);
+    throw new Error(
+      `MCP call failed: ${response.status} ${response.statusText}`
+    );
   }
 
   if (response.data.error) {
@@ -69,7 +74,9 @@ async function measureOperation<T>(
 }
 
 async function runPerformanceTest() {
-  console.log('🚀 Starting Performance Test for Monad Agentic Payment System\n');
+  console.log(
+    '🚀 Starting Performance Test for Monad Agentic Payment System\n'
+  );
 
   const results: PerformanceResult[] = [];
 
@@ -79,7 +86,9 @@ async function runPerformanceTest() {
     await callMCP('createWallet', {});
   });
   results.push(result1);
-  console.log(`   Duration: ${result1.duration}ms, Success: ${result1.success}\n`);
+  console.log(
+    `   Duration: ${result1.duration}ms, Success: ${result1.success}\n`
+  );
 
   // Create wallet for subsequent tests
   const wallet = await callMCP<{ walletAddress: string }>('createWallet', {});
@@ -105,7 +114,9 @@ async function runPerformanceTest() {
     });
   });
   results.push(result2);
-  console.log(`   Duration: ${result2.duration}ms, Success: ${result2.success}\n`);
+  console.log(
+    `   Duration: ${result2.duration}ms, Success: ${result2.success}\n`
+  );
 
   // Test 3: Set budget
   console.log('📝 Test 3: Set budget');
@@ -117,7 +128,9 @@ async function runPerformanceTest() {
     });
   });
   results.push(result3);
-  console.log(`   Duration: ${result3.duration}ms, Success: ${result3.success}\n`);
+  console.log(
+    `   Duration: ${result3.duration}ms, Success: ${result3.success}\n`
+  );
 
   // Test 4: Generate session key
   console.log('📝 Test 4: Generate session key');
@@ -132,7 +145,9 @@ async function runPerformanceTest() {
     });
   });
   results.push(result4);
-  console.log(`   Duration: ${result4.duration}ms, Success: ${result4.success}\n`);
+  console.log(
+    `   Duration: ${result4.duration}ms, Success: ${result4.success}\n`
+  );
 
   // Generate session key for payment test
   const sessionKey = await callMCP<{ id: string }>('generateSessionKey', {
@@ -165,7 +180,9 @@ async function runPerformanceTest() {
     }
   });
   results.push(result5);
-  console.log(`   Duration: ${result5.duration}ms, Success: ${result5.success}\n`);
+  console.log(
+    `   Duration: ${result5.duration}ms, Success: ${result5.success}\n`
+  );
 
   // Test 6: List audit records
   console.log('📝 Test 6: List audit records');
@@ -173,23 +190,27 @@ async function runPerformanceTest() {
     await callMCP('listAuditRecords', {});
   });
   results.push(result6);
-  console.log(`   Duration: ${result6.duration}ms, Success: ${result6.success}\n`);
+  console.log(
+    `   Duration: ${result6.duration}ms, Success: ${result6.success}\n`
+  );
 
   // Summary
   console.log('📊 Performance Test Summary');
   console.log('=');
 
-  const successfulResults = results.filter(r => r.success);
-  const failedResults = results.filter(r => !r.success);
+  const successfulResults = results.filter((r) => r.success);
+  const failedResults = results.filter((r) => !r.success);
 
   console.log(`Total operations: ${results.length}`);
   console.log(`Successful: ${successfulResults.length}`);
   console.log(`Failed: ${failedResults.length}`);
   console.log('');
 
-  const averageDuration = successfulResults.reduce((sum, r) => sum + r.duration, 0) / successfulResults.length;
-  const maxDuration = Math.max(...successfulResults.map(r => r.duration));
-  const minDuration = Math.min(...successfulResults.map(r => r.duration));
+  const averageDuration =
+    successfulResults.reduce((sum, r) => sum + r.duration, 0) /
+    successfulResults.length;
+  const maxDuration = Math.max(...successfulResults.map((r) => r.duration));
+  const minDuration = Math.min(...successfulResults.map((r) => r.duration));
 
   console.log(`Average duration: ${averageDuration.toFixed(2)}ms`);
   console.log(`Min duration: ${minDuration}ms`);
@@ -198,11 +219,15 @@ async function runPerformanceTest() {
 
   // Check performance requirement: < 5 seconds (5000ms)
   const meetsRequirement = maxDuration < 5000;
-  console.log(`Performance requirement (< 5000ms): ${meetsRequirement ? '✅ PASS' : '❌ FAIL'}`);
+  console.log(
+    `Performance requirement (< 5000ms): ${meetsRequirement ? '✅ PASS' : '❌ FAIL'}`
+  );
   console.log('=');
 
   if (!meetsRequirement) {
-    console.log('\n⚠️  Performance requirement NOT met: Some operations took longer than 5 seconds');
+    console.log(
+      '\n⚠️  Performance requirement NOT met: Some operations took longer than 5 seconds'
+    );
     process.exit(1);
   }
 

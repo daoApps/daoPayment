@@ -1,4 +1,4 @@
-import Wallet from './wallet';
+import Wallet from './wallet.js';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -53,7 +53,7 @@ class RecoveryManager {
       walletAddress,
       seedPhrase,
       createdAt: Date.now(),
-      lastUsed: Date.now()
+      lastUsed: Date.now(),
     };
 
     this.seeds.set(walletAddress, seed);
@@ -70,7 +70,7 @@ class RecoveryManager {
         // 更新最后使用时间
         seed.lastUsed = Date.now();
         this.saveSeed(seed);
-        
+
         // 这里应该实现从助记词生成私钥的逻辑
         // 简化实现，返回一个新钱包
         return new Wallet();
@@ -101,10 +101,36 @@ class RecoveryManager {
   // 生成随机单词
   private generateRandomWords(count: number): string[] {
     const wordList = [
-      'apple', 'banana', 'cherry', 'date', 'elderberry', 'fig', 'grape', 'honeydew',
-      'kiwi', 'lemon', 'mango', 'orange', 'peach', 'quince', 'raspberry', 'strawberry',
-      'tangerine', 'watermelon', 'apricot', 'blueberry', 'cantaloupe', 'dragonfruit',
-      'eggplant', 'guava', 'jackfruit', 'lime', 'nectarine', 'papaya', 'persimmon', 'plum'
+      'apple',
+      'banana',
+      'cherry',
+      'date',
+      'elderberry',
+      'fig',
+      'grape',
+      'honeydew',
+      'kiwi',
+      'lemon',
+      'mango',
+      'orange',
+      'peach',
+      'quince',
+      'raspberry',
+      'strawberry',
+      'tangerine',
+      'watermelon',
+      'apricot',
+      'blueberry',
+      'cantaloupe',
+      'dragonfruit',
+      'eggplant',
+      'guava',
+      'jackfruit',
+      'lime',
+      'nectarine',
+      'papaya',
+      'persimmon',
+      'plum',
     ];
     const words: string[] = [];
     for (let i = 0; i < count; i++) {

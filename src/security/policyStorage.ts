@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { Policy } from './policyEngine';
+import { Policy } from './policyEngine.js';
 
 class PolicyStorage {
   private storagePath: string;

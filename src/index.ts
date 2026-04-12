@@ -1,9 +1,9 @@
-import MainManager from './core/mainManager';
-import Wallet from './core/wallet';
-import WalletManager from './core/walletManager';
-import SecurityManager from './security/securityManager';
-import AgentInterface from './agent/agentInterface';
-import AuditIntegrator from './audit/auditIntegrator';
+import MainManager from './core/mainManager.js';
+import Wallet from './core/wallet.js';
+import WalletManager from './core/walletManager.js';
+import SecurityManager from './security/securityManager.js';
+import AgentInterface from './agent/agentInterface.js';
+import AuditIntegrator from './audit/auditIntegrator.js';
 
 // 导出核心类和功能
 export {
@@ -12,7 +12,7 @@ export {
   WalletManager,
   SecurityManager,
   AgentInterface,
-  AuditIntegrator
+  AuditIntegrator,
 };
 
 // 默认导出 MainManager

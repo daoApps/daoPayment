@@ -1,6 +1,6 @@
-import AuditManager from './auditManager';
-import PaymentReceiptGenerator from './paymentReceipt';
-import { PaymentRequest, PaymentResult } from '../agent/paymentExecutor';
+import AuditManager from './auditManager.js';
+import PaymentReceiptGenerator from './paymentReceipt.js';
+import { PaymentRequest, PaymentResult } from '../agent/paymentExecutor.js';
 
 class AuditIntegrator {
   private auditManager: AuditManager;
@@ -29,19 +29,28 @@ class AuditIntegrator {
       purpose: paymentRequest.purpose,
       policyHit: [], // 将在支付过程中更新
       signatureMethod: 'session-key', // 默认签名方法
-      riskLevel: paymentRequest.amount > 100 ? 'high' : paymentRequest.amount > 10 ? 'medium' : 'low',
+      riskLevel:
+        paymentRequest.amount > 100
+          ? 'high'
+          : paymentRequest.amount > 10
+            ? 'medium'
+            : 'low',
       requiresApproval: paymentRequest.amount > 50,
       approvalStatus: paymentRequest.amount > 50 ? 'pending' : 'approved',
-      status: 'pending'
+      status: 'pending',
     });
   }
 
   // 更新支付审计记录
-  updatePaymentAudit(auditId: string, paymentResult: PaymentResult, policyHit: string[] = []) {
+  updatePaymentAudit(
+    auditId: string,
+    paymentResult: PaymentResult,
+    policyHit: string[] = []
+  ) {
     const updates: any = {
       policyHit,
       status: paymentResult.success ? 'completed' : 'failed',
-      completedAt: Date.now()
+      completedAt: Date.now(),
     };
 
     if (paymentResult.txHash) {

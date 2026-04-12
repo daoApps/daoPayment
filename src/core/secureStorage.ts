@@ -7,7 +7,10 @@ class SecureStorage {
   private storagePath: string;
 
   constructor(encryptionKey: string, storagePath: string = './secure-storage') {
-    this.encryptionKey = crypto.createHash('sha256').update(encryptionKey).digest();
+    this.encryptionKey = crypto
+      .createHash('sha256')
+      .update(encryptionKey)
+      .digest();
     this.storagePath = storagePath;
     if (!fs.existsSync(this.storagePath)) {
       fs.mkdirSync(this.storagePath, { recursive: true });
@@ -25,7 +28,11 @@ class SecureStorage {
   private decrypt(encryptedData: string): string {
     const [ivHex, encrypted] = encryptedData.split(':');
     const iv = Buffer.from(ivHex, 'hex');
-    const decipher = crypto.createDecipheriv('aes-256-cbc', this.encryptionKey, iv);
+    const decipher = crypto.createDecipheriv(
+      'aes-256-cbc',
+      this.encryptionKey,
+      iv
+    );
     let decrypted = decipher.update(encrypted, 'hex', 'utf8');
     decrypted += decipher.final('utf8');
     return decrypted;

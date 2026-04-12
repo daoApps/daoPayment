@@ -34,7 +34,7 @@ class PolicyManager {
       allowedTokens,
       allowedMethods,
       blockedCategories,
-      allowedCategories
+      allowedCategories,
     };
     this.policies.set(policyId, policy);
   }
@@ -74,67 +74,83 @@ class PolicyManager {
   } {
     const policy = this.policies.get(policyId);
     if (!policy) {
-      return { allowed: false, reason: 'Policy not found', requiresHumanApproval: false };
+      return {
+        allowed: false,
+        reason: 'Policy not found',
+        requiresHumanApproval: false,
+      };
     }
 
     if (amount > policy.maxSingleAmount) {
-      return { 
-        allowed: false, 
-        reason: `Amount exceeds maximum single amount of ${policy.maxSingleAmount}`, 
-        requiresHumanApproval: false 
+      return {
+        allowed: false,
+        reason: `Amount exceeds maximum single amount of ${policy.maxSingleAmount}`,
+        requiresHumanApproval: false,
       };
     }
 
     if (amount > policy.requireHumanApprovalAbove) {
-      return { 
-        allowed: true, 
-        requiresHumanApproval: true 
+      return {
+        allowed: true,
+        requiresHumanApproval: true,
       };
     }
 
-    if (policy.allowedRecipients.length > 0 && !policy.allowedRecipients.includes(recipient)) {
-      return { 
-        allowed: false, 
-        reason: 'Recipient not in allowed list', 
-        requiresHumanApproval: false 
+    if (
+      policy.allowedRecipients.length > 0 &&
+      !policy.allowedRecipients.includes(recipient)
+    ) {
+      return {
+        allowed: false,
+        reason: 'Recipient not in allowed list',
+        requiresHumanApproval: false,
       };
     }
 
-    if (policy.allowedTokens.length > 0 && !policy.allowedTokens.includes(token)) {
-      return { 
-        allowed: false, 
-        reason: 'Token not in allowed list', 
-        requiresHumanApproval: false 
+    if (
+      policy.allowedTokens.length > 0 &&
+      !policy.allowedTokens.includes(token)
+    ) {
+      return {
+        allowed: false,
+        reason: 'Token not in allowed list',
+        requiresHumanApproval: false,
       };
     }
 
-    if (policy.allowedMethods.length > 0 && !policy.allowedMethods.includes(method)) {
-      return { 
-        allowed: false, 
-        reason: 'Method not allowed', 
-        requiresHumanApproval: false 
+    if (
+      policy.allowedMethods.length > 0 &&
+      !policy.allowedMethods.includes(method)
+    ) {
+      return {
+        allowed: false,
+        reason: 'Method not allowed',
+        requiresHumanApproval: false,
       };
     }
 
     if (policy.blockedCategories.includes(category)) {
-      return { 
-        allowed: false, 
-        reason: 'Category is blocked', 
-        requiresHumanApproval: false 
+      return {
+        allowed: false,
+        reason: 'Category is blocked',
+        requiresHumanApproval: false,
       };
     }
 
-    if (policy.allowedCategories.length > 0 && !policy.allowedCategories.includes(category)) {
-      return { 
-        allowed: false, 
-        reason: 'Category not in allowed list', 
-        requiresHumanApproval: false 
+    if (
+      policy.allowedCategories.length > 0 &&
+      !policy.allowedCategories.includes(category)
+    ) {
+      return {
+        allowed: false,
+        reason: 'Category not in allowed list',
+        requiresHumanApproval: false,
       };
     }
 
-    return { 
-      allowed: true, 
-      requiresHumanApproval: false 
+    return {
+      allowed: true,
+      requiresHumanApproval: false,
     };
   }
 }

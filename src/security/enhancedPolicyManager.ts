@@ -1,5 +1,5 @@
-import PolicyEngine, { Policy, PolicyRule } from './policyEngine';
-import PolicyStorage from './policyStorage';
+import PolicyEngine, { Policy, PolicyRule } from './policyEngine.js';
+import PolicyStorage from './policyStorage.js';
 
 class EnhancedPolicyManager {
   private policyEngine: PolicyEngine;
@@ -75,7 +75,9 @@ class EnhancedPolicyManager {
   }
 
   // 创建常用策略模板
-  createTemplatePolicy(templateType: 'default' | 'strict' | 'permissive'): Policy {
+  createTemplatePolicy(
+    templateType: 'default' | 'strict' | 'permissive'
+  ): Policy {
     const id = `template-${templateType}-${Date.now()}`;
     let name: string;
     let description: string;
@@ -92,7 +94,7 @@ class EnhancedPolicyManager {
             operator: 'gt',
             value: 100,
             action: 'deny',
-            priority: 10
+            priority: 10,
           },
           {
             id: 'rule-2',
@@ -100,7 +102,7 @@ class EnhancedPolicyManager {
             operator: 'gt',
             value: 50,
             action: 'require_approval',
-            priority: 9
+            priority: 9,
           },
           {
             id: 'rule-3',
@@ -108,7 +110,7 @@ class EnhancedPolicyManager {
             operator: 'in',
             value: ['personal_transfer'],
             action: 'deny',
-            priority: 8
+            priority: 8,
           },
           {
             id: 'rule-4',
@@ -116,8 +118,8 @@ class EnhancedPolicyManager {
             operator: 'gt',
             value: 0,
             action: 'allow',
-            priority: 1
-          }
+            priority: 1,
+          },
         ];
         break;
       case 'strict':
@@ -130,7 +132,7 @@ class EnhancedPolicyManager {
             operator: 'gt',
             value: 50,
             action: 'deny',
-            priority: 10
+            priority: 10,
           },
           {
             id: 'rule-2',
@@ -138,7 +140,7 @@ class EnhancedPolicyManager {
             operator: 'gt',
             value: 20,
             action: 'require_approval',
-            priority: 9
+            priority: 9,
           },
           {
             id: 'rule-3',
@@ -146,7 +148,7 @@ class EnhancedPolicyManager {
             operator: 'not_in',
             value: ['api', 'storage', 'compute'],
             action: 'deny',
-            priority: 8
+            priority: 8,
           },
           {
             id: 'rule-4',
@@ -154,8 +156,8 @@ class EnhancedPolicyManager {
             operator: 'gt',
             value: 0,
             action: 'allow',
-            priority: 1
-          }
+            priority: 1,
+          },
         ];
         break;
       case 'permissive':
@@ -168,7 +170,7 @@ class EnhancedPolicyManager {
             operator: 'gt',
             value: 1000,
             action: 'deny',
-            priority: 10
+            priority: 10,
           },
           {
             id: 'rule-2',
@@ -176,7 +178,7 @@ class EnhancedPolicyManager {
             operator: 'gt',
             value: 500,
             action: 'require_approval',
-            priority: 9
+            priority: 9,
           },
           {
             id: 'rule-3',
@@ -184,8 +186,8 @@ class EnhancedPolicyManager {
             operator: 'gt',
             value: 0,
             action: 'allow',
-            priority: 1
-          }
+            priority: 1,
+          },
         ];
         break;
       default:

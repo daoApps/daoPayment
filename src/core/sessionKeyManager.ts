@@ -61,7 +61,7 @@ class SessionKeyManager {
     const { privateKey, publicKey } = crypto.generateKeyPairSync('ec', {
       namedCurve: 'secp256k1',
       publicKeyEncoding: { type: 'spki', format: 'pem' },
-      privateKeyEncoding: { type: 'pkcs8', format: 'pem' }
+      privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
     });
 
     // expiration 参数是相对秒数，转换为绝对时间戳
@@ -78,7 +78,7 @@ class SessionKeyManager {
       maxAmount,
       dailyLimit,
       createdAt: Date.now(),
-      lastUsed: Date.now()
+      lastUsed: Date.now(),
     };
 
     this.sessionKeys.set(sessionKey.id, sessionKey);
@@ -137,12 +137,16 @@ class SessionKeyManager {
 
   // 获取 Agent 的所有 Session Key
   getAgentSessionKeys(agentId: string): SessionKey[] {
-    return Array.from(this.sessionKeys.values()).filter(key => key.agentId === agentId);
+    return Array.from(this.sessionKeys.values()).filter(
+      (key) => key.agentId === agentId
+    );
   }
 
   // 获取钱包的所有 Session Key
   getWalletSessionKeys(walletAddress: string): SessionKey[] {
-    return Array.from(this.sessionKeys.values()).filter(key => key.walletAddress === walletAddress);
+    return Array.from(this.sessionKeys.values()).filter(
+      (key) => key.walletAddress === walletAddress
+    );
   }
 
   // 清理过期的 Session Key

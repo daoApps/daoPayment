@@ -1,5 +1,5 @@
-import Wallet from '../core/wallet';
-import SecurityManager from '../security/securityManager';
+import Wallet from '../core/wallet.js';
+import SecurityManager from '../security/securityManager.js';
 
 interface PaymentRequest {
   agentId: string;
@@ -47,7 +47,7 @@ class PaymentExecutor {
     if (!securityCheck.allowed) {
       return {
         success: false,
-        error: securityCheck.reason
+        error: securityCheck.reason,
       };
     }
 
@@ -55,42 +55,46 @@ class PaymentExecutor {
       return {
         success: false,
         requiresApproval: true,
-        error: 'Payment requires human approval'
+        error: 'Payment requires human approval',
       };
     }
 
-    // 2. 执行支付
+    // 2. 执行支付 - 转换为 MPP SDK 期望的类型
     let retries = 0;
     while (retries < this.maxRetries) {
       try {
         const txHash = await wallet.sendTransaction(
-          paymentRequest.recipient,
-          paymentRequest.amount
+          paymentRequest.recipient as `0x${string}`,
+          BigInt(paymentRequest.amount),
+          (paymentRequest.token as `0x${string}`) || undefined
         );
 
         // 3. 更新预算
-        this.securityManager.updateBudget(paymentRequest.walletAddress, paymentRequest.amount);
+        this.securityManager.updateBudget(
+          paymentRequest.walletAddress,
+          paymentRequest.amount
+        );
 
         return {
           success: true,
-          txHash
+          txHash,
         };
       } catch (error) {
         retries++;
         if (retries >= this.maxRetries) {
           return {
             success: false,
-            error: `Payment failed after ${this.maxRetries} retries: ${error}`
+            error: `Payment failed after ${this.maxRetries} retries: ${error}`,
           };
         }
         // 等待一段时间后重试
-        await new Promise(resolve => setTimeout(resolve, 1000 * retries));
+        await new Promise((resolve) => setTimeout(resolve, 1000 * retries));
       }
     }
 
     return {
       success: false,
-      error: 'Payment execution failed'
+      error: 'Payment execution failed',
     };
   }
 

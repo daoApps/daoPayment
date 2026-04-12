@@ -4,15 +4,16 @@
   "description": "Agent-native secure payment system for Monad blockchain",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
-    "dev": "ts-node src/index.ts",
-    "start": "node dist/index.js",
-    "mcp": "ts-node src/mcp/index.ts",
-    "mcp:start": "node dist/mcp/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build:windows": "tsc",
-    "build:macos": "tsc",
-    "build:linux": "tsc"
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "vite:dev": "vite",
+    "vite:build": "vite build",
+    "vite:preview": "vite preview"
   },
   "keywords": [
     "monad",
@@ -23,17 +24,39 @@
   ],
   "author": "",
   "license": "MIT",
-  "type": "commonjs",
+  "type": "module",
   "bin": {
     "monad-payment": "dist/cli.js"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@next/eslint-plugin-next": "^16.2.3",
     "@types/node": "^25.6.0",
+    "@typescript-eslint/eslint-plugin": "^8.58.1",
+    "@typescript-eslint/parser": "^8.58.1",
+    "@vitejs/plugin-react": "^6.0.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5",
+    "prettier": "^3.8.2",
     "ts-node": "^10.9.2",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.2",
+    "vite": "^8.0.8"
   },
   "dependencies": {
+    "@monad-crypto/mpp": "github:monad-crypto/monad-ts#main",
+    "@types/react": "^19.2.14",
+    "@wagmi/connectors": "^8.0.1",
+    "@wagmi/core": "^3.4.2",
     "axios": "^1.15.0",
-    "commander": "^12.0.0"
+    "commander": "^12.0.0",
+    "eslint": "^10.2.0",
+    "eslint-config-next": "^16.2.3",
+    "mppx": "^0.5.12",
+    "next": "^16.2.3",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "viem": "^2.47.12",
+    "wagmi": "^3.6.1",
+    "zustand": "^5.0.12"
   }
 }

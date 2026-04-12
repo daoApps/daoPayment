@@ -32,7 +32,7 @@ class PolicyEngine {
       description,
       rules: rules.sort((a, b) => b.priority - a.priority), // 按优先级排序
       createdAt: Date.now(),
-      updatedAt: Date.now()
+      updatedAt: Date.now(),
     };
 
     this.policies.set(id, policy);
@@ -49,11 +49,13 @@ class PolicyEngine {
     const updatedPolicy: Policy = {
       ...policy,
       ...updates,
-      updatedAt: Date.now()
+      updatedAt: Date.now(),
     };
 
     if (updates.rules) {
-      updatedPolicy.rules = updates.rules.sort((a, b) => b.priority - a.priority);
+      updatedPolicy.rules = updates.rules.sort(
+        (a, b) => b.priority - a.priority
+      );
     }
 
     this.policies.set(id, updatedPolicy);
@@ -156,7 +158,10 @@ class PolicyEngine {
       // 优先级：deny > require_approval > allow
       if (result.action === 'deny') {
         finalAction = 'deny';
-      } else if (result.action === 'require_approval' && finalAction !== 'deny') {
+      } else if (
+        result.action === 'require_approval' &&
+        finalAction !== 'deny'
+      ) {
         finalAction = 'require_approval';
       }
     }

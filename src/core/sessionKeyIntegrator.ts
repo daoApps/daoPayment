@@ -1,7 +1,7 @@
-import SessionKeyManager from './sessionKeyManager';
-import PaymentExecutor from '../agent/paymentExecutor';
-import Wallet from './wallet';
-import { PaymentRequest, PaymentResult } from '../agent/paymentExecutor';
+import SessionKeyManager from './sessionKeyManager.js';
+import PaymentExecutor from '../agent/paymentExecutor.js';
+import Wallet from './wallet.js';
+import { PaymentRequest, PaymentResult } from '../agent/paymentExecutor.js';
 
 class SessionKeyIntegrator {
   private sessionKeyManager: SessionKeyManager;
@@ -47,7 +47,7 @@ class SessionKeyIntegrator {
     if (!isValid) {
       return {
         success: false,
-        error: 'Invalid or expired session key'
+        error: 'Invalid or expired session key',
       };
     }
 

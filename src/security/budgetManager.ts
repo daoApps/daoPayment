@@ -41,15 +41,22 @@ class BudgetManager {
   }
 
   private saveBudget(budget: Budget): void {
-    const budgetPath = path.join(this.storagePath, `${budget.walletAddress}.json`);
+    const budgetPath = path.join(
+      this.storagePath,
+      `${budget.walletAddress}.json`
+    );
     fs.writeFileSync(budgetPath, JSON.stringify(budget, null, 2));
   }
 
   private resetDailyBudgets(): void {
     const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const today = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    ).getTime();
 
-    for (const [address, budget] of this.budgets.entries()) {
+    for (const [_address, budget] of this.budgets.entries()) {
       if (budget.lastResetDate < today) {
         budget.dailySpent = 0;
         budget.lastResetDate = today;
@@ -60,9 +67,13 @@ class BudgetManager {
 
   private resetWeeklyBudgets(): void {
     const now = new Date();
-    const weekStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay()).getTime();
+    const weekStart = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() - now.getDay()
+    ).getTime();
 
-    for (const [address, budget] of this.budgets.entries()) {
+    for (const [_address, budget] of this.budgets.entries()) {
       if (budget.lastWeekResetDate < weekStart) {
         budget.weeklySpent = 0;
         budget.lastWeekResetDate = weekStart;
@@ -77,8 +88,16 @@ class BudgetManager {
     weeklyLimit: number
   ): void {
     const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-    const weekStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay()).getTime();
+    const today = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    ).getTime();
+    const weekStart = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() - now.getDay()
+    ).getTime();
 
     const budget: Budget = {
       walletAddress,
@@ -87,14 +106,17 @@ class BudgetManager {
       weeklySpent: 0,
       weeklyLimit,
       lastResetDate: today,
-      lastWeekResetDate: weekStart
+      lastWeekResetDate: weekStart,
     };
 
     this.budgets.set(walletAddress, budget);
     this.saveBudget(budget);
   }
 
-  checkBudget(walletAddress: string, amount: number): {
+  checkBudget(
+    walletAddress: string,
+    amount: number
+  ): {
     allowed: boolean;
     reason?: string;
   } {
@@ -120,16 +142,16 @@ class BudgetManager {
     this.resetWeeklyBudgets();
 
     if (budget!.dailySpent + amount > budget!.dailyLimit) {
-      return { 
-        allowed: false, 
-        reason: `Daily budget exceeded. Spent: ${budget!.dailySpent}, Limit: ${budget!.dailyLimit}` 
+      return {
+        allowed: false,
+        reason: `Daily budget exceeded. Spent: ${budget!.dailySpent}, Limit: ${budget!.dailyLimit}`,
       };
     }
 
     if (budget!.weeklySpent + amount > budget!.weeklyLimit) {
-      return { 
-        allowed: false, 
-        reason: `Weekly budget exceeded. Spent: ${budget!.weeklySpent}, Limit: ${budget!.weeklyLimit}` 
+      return {
+        allowed: false,
+        reason: `Weekly budget exceeded. Spent: ${budget!.weeklySpent}, Limit: ${budget!.weeklyLimit}`,
       };
     }
 
@@ -153,8 +175,16 @@ class BudgetManager {
     const budget = this.budgets.get(walletAddress);
     if (budget) {
       const now = new Date();
-      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-      const weekStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay()).getTime();
+      const today = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate()
+      ).getTime();
+      const weekStart = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate() - now.getDay()
+      ).getTime();
 
       budget.dailySpent = 0;
       budget.weeklySpent = 0;
