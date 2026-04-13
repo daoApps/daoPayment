@@ -1,0 +1,43 @@
+{
+  "id": "template-default-1775977897381",
+  "name": "Default Policy",
+  "description": "Default policy with basic security controls",
+  "rules": [
+    {
+      "id": "rule-1",
+      "type": "amount",
+      "operator": "gt",
+      "value": 100,
+      "action": "deny",
+      "priority": 10
+    },
+    {
+      "id": "rule-2",
+      "type": "amount",
+      "operator": "gt",
+      "value": 50,
+      "action": "require_approval",
+      "priority": 9
+    },
+    {
+      "id": "rule-3",
+      "type": "category",
+      "operator": "in",
+      "value": [
+        "personal_transfer"
+      ],
+      "action": "deny",
+      "priority": 8
+    },
+    {
+      "id": "rule-4",
+      "type": "amount",
+      "operator": "gt",
+      "value": 0,
+      "action": "allow",
+      "priority": 1
+    }
+  ],
+  "createdAt": 1775977897381,
+  "updatedAt": 1775977897381
+}

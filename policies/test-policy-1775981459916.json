@@ -1,0 +1,25 @@
+{
+  "id": "test-policy-1775981459916",
+  "name": "Test Policy",
+  "description": "Test policy for async verification",
+  "rules": [
+    {
+      "id": "rule-1",
+      "type": "amount",
+      "operator": "gt",
+      "value": 100,
+      "action": "deny",
+      "priority": 10
+    },
+    {
+      "id": "rule-2",
+      "type": "amount",
+      "operator": "gt",
+      "value": 50,
+      "action": "require_approval",
+      "priority": 9
+    }
+  ],
+  "createdAt": 1775981459916,
+  "updatedAt": 1775981459916
+}

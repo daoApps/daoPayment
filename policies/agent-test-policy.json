@@ -1,0 +1,17 @@
+{
+  "id": "agent-test-policy",
+  "name": "Agent Test Policy",
+  "description": "Policy for agent connection testing",
+  "rules": [
+    {
+      "id": "rule-1",
+      "type": "amount",
+      "operator": "gt",
+      "value": 0,
+      "action": "allow",
+      "priority": 10
+    }
+  ],
+  "createdAt": 1775969461115,
+  "updatedAt": 1775969461115
+}

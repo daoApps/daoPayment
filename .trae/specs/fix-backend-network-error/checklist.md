@@ -1,0 +1,4 @@
+- [x] `next.config.js` 包含指向 `http://127.0.0.1:8000/api/:path*` 的重写（rewrite）规则。
+- [x] `src/api/client.ts` 中使用 `/api` 作为 `BASE_URL`。
+- [x] 确保 Next.js 应用构建成功且无相关依赖错误。
+- [x] 确保重写规则位于正确的 `next.config.mjs` 中，并且清理掉了 `next.config.js`。

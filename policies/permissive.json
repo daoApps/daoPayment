@@ -1,0 +1,16 @@
+{
+  "id": "permissive",
+  "name": "Permissive Policy",
+  "description": "Allow all payments",
+  "rules": [
+    {
+      "type": "amount",
+      "operator": "gt",
+      "value": 0,
+      "action": "allow",
+      "priority": 1
+    }
+  ],
+  "createdAt": 1775967040962,
+  "updatedAt": 1775967040962
+}

@@ -1,0 +1,17 @@
+{
+  "id": "simple-allow",
+  "name": "Simple Allow",
+  "description": "Allow any amount > 0",
+  "rules": [
+    {
+      "id": "rule-1",
+      "type": "amount",
+      "operator": "gt",
+      "value": 0,
+      "action": "allow",
+      "priority": 10
+    }
+  ],
+  "createdAt": 1775967854596,
+  "updatedAt": 1775967854596
+}

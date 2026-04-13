@@ -1,0 +1,23 @@
+{
+  "id": "allow-all-correct",
+  "name": "Allow All Correct",
+  "description": "Allow all payments",
+  "rules": [
+    {
+      "type": "amount",
+      "operator": "lte",
+      "value": 10,
+      "action": "allow",
+      "priority": 2
+    },
+    {
+      "type": "amount",
+      "operator": "gt",
+      "value": 0,
+      "action": "allow",
+      "priority": 1
+    }
+  ],
+  "createdAt": 1775966989216,
+  "updatedAt": 1775966989216
+}

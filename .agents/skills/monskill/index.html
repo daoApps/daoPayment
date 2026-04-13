@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MONSKILLS — Knowledge Skills for AI Agents</title>
+    <meta
+      name="description"
+      content="Skills for developing apps on Monad. Assists LLM with frontend, smart contract deployment, and deploying to production."
+    />
+    <meta
+      property="og:title"
+      content="MONSKILLS — Knowledge Skills for AI Agents Building on Monad"
+    />
+    <meta
+      property="og:description"
+      content="Skills for developing apps on Monad. Assists LLM with frontend, smart contract deployment, and deploying to production."
+    />
+    <meta property="og:url" content="https://skills.devnads.com" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://skills.devnads.com/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://skills.devnads.com/og.png" />
+    <style>
+      :root {
+        --bg-primary: #0a0616;
+        --bg-secondary: #0e091c;
+        --bg-tertiary: #150e28;
+        --fg-primary: #e2e8f0;
+        --fg-secondary: #c8d0e8;
+        --fg-tertiary: #8490b0;
+        --accent-primary: #8b75ff;
+        --accent-secondary: #a898ff;
+        --accent-gradient: linear-gradient(135deg, #8b75ff 0%, #6366f1 100%);
+        --border-subtle: #231a38;
+        --border-strong: #2d2245;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+        --shadow-md:
+          0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+        --shadow-lg:
+          0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+        --radius-sm: 4px;
+        --radius-md: 6px;
+        --radius-lg: 8px;
+        --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+        --spacing-1: 0.25rem;
+        --spacing-2: 0.5rem;
+        --spacing-3: 0.75rem;
+        --spacing-4: 1rem;
+        --spacing-6: 1.5rem;
+        --spacing-8: 2rem;
+        --spacing-12: 3rem;
+        --spacing-16: 4rem;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+      }
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background:
+          radial-gradient(
+            circle at 20% 30%,
+            rgba(139, 117, 255, 0.08) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 70%,
+            rgba(99, 102, 241, 0.05) 0%,
+            transparent 50%
+          );
+        pointer-events: none;
+        z-index: 0;
+      }
+      body {
+        background: radial-gradient(
+          ellipse at top,
+          var(--bg-secondary) 0%,
+          var(--bg-primary) 100%
+        );
+        color: var(--fg-secondary);
+        font-family:
+          'JetBrains Mono', 'SF Mono', 'Cascadia Code', 'Fira Code', 'Menlo',
+          'Consolas', monospace;
+        font-size: 15px;
+        line-height: 1.7;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        max-width: 640px;
+        margin: 0 auto;
+        padding: var(--spacing-8) var(--spacing-6) var(--spacing-4);
+        position: relative;
+        z-index: 1;
+      }
+      a {
+        color: var(--accent-primary);
+        text-decoration: none;
+        transition: color var(--transition-fast);
+      }
+      a:hover {
+        color: var(--accent-secondary);
+        text-decoration: underline;
+      }
+
+      .ascii {
+        color: var(--accent-primary);
+        font-size: 12px;
+        line-height: 1.15;
+        white-space: pre;
+        margin-bottom: var(--spacing-6);
+        letter-spacing: 0.3px;
+        opacity: 0;
+        animation: fadeIn 0.8s ease-out forwards;
+      }
+      @keyframes fadeIn {
+        to {
+          opacity: 1;
+        }
+      }
+      .ascii .ch {
+        display: inline;
+      }
+
+      .tagline {
+        color: var(--fg-primary);
+        font-size: 16px;
+        margin-bottom: var(--spacing-6);
+        animation: fadeIn 0.8s ease-out 0.2s both;
+      }
+      .cursor {
+        display: inline-block;
+        width: 8px;
+        height: 1.1em;
+        background: var(--accent-primary);
+        vertical-align: text-bottom;
+        animation: blink 1s step-end infinite;
+        margin-left: 2px;
+      }
+      @keyframes blink {
+        50% {
+          opacity: 0;
+        }
+      }
+
+      h2 {
+        color: var(--accent-primary);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        margin: var(--spacing-6) 0 var(--spacing-3) 0;
+        padding-bottom: var(--spacing-1);
+        border-bottom: 1px solid var(--border-strong);
+        font-weight: 400;
+        width: 100%;
+      }
+
+      /* How to use — compact tabs */
+      .how-to-tabs {
+        margin-top: 0;
+        width: 100%;
+        margin-bottom: var(--spacing-6);
+        animation: fadeIn 0.8s ease-out 0.3s both;
+      }
+      .how-to-tab-nav {
+        display: flex;
+        justify-content: center;
+        gap: 0;
+        border-bottom: 1px solid var(--border-strong);
+      }
+      .how-to-tab-btn {
+        background: none;
+        border: none;
+        border-bottom: 2px solid transparent;
+        padding: 0.35rem 0.75rem;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--fg-tertiary);
+        cursor: pointer;
+        transition:
+          color var(--transition-base),
+          border-color var(--transition-base),
+          transform var(--transition-fast);
+      }
+      .how-to-tab-btn:hover {
+        color: var(--fg-primary);
+        transform: translateY(-1px);
+      }
+      .how-to-tab-btn.active {
+        color: var(--accent-primary);
+        border-bottom-color: var(--accent-primary);
+      }
+      .how-to-tab-panel {
+        display: none;
+      }
+      .how-to-tab-panel.active {
+        display: block;
+      }
+      .how-to-tab-panel .tab-desc {
+        font-size: 12px;
+        color: var(--fg-tertiary);
+        margin-bottom: var(--spacing-2);
+        line-height: 1.4;
+      }
+      .how-to-tab-panel code {
+        display: block;
+        font-family: inherit;
+        font-size: 15px;
+        color: var(--fg-primary);
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius-md);
+        padding: var(--spacing-3) var(--spacing-4);
+        margin-top: var(--spacing-2);
+        cursor: pointer;
+        transition:
+          border-color var(--transition-fast),
+          background var(--transition-fast),
+          transform var(--transition-fast),
+          box-shadow var(--transition-fast);
+        box-shadow: var(--shadow-sm);
+      }
+      .how-to-tab-panel code:hover {
+        border-color: var(--accent-primary);
+        background: rgba(139, 117, 255, 0.08);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+      }
+      .how-to-tab-panel code.copied {
+        border-color: var(--accent-primary);
+        color: var(--accent-primary);
+        background: rgba(139, 117, 255, 0.12);
+      }
+
+      .footer {
+        color: var(--fg-tertiary);
+        font-size: 11px;
+        margin-top: var(--spacing-3);
+        padding-top: var(--spacing-2);
+        border-top: 1px solid var(--border-strong);
+        flex-shrink: 0;
+        animation: fadeIn 0.8s ease-out 0.5s both;
+      }
+
+      .copy-btn svg,
+      .hero-btn svg {
+        width: 12px;
+        height: 12px;
+        flex-shrink: 0;
+      }
+
+      /* Disclaimer modal */
+      .disclaimer-backdrop {
+        display: flex;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.85);
+        z-index: 200;
+        align-items: center;
+        justify-content: center;
+        padding: var(--spacing-8);
+        backdrop-filter: blur(4px);
+      }
+      .disclaimer-backdrop.hidden {
+        display: none;
+      }
+      .disclaimer-box {
+        background: var(--bg-secondary);
+        border: 1px solid #d4605f;
+        border-radius: var(--radius-lg);
+        max-width: 520px;
+        width: 100%;
+        padding: var(--spacing-8);
+        box-shadow: var(--shadow-lg);
+        animation: slideUp 0.3s ease-out;
+      }
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(16px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+      .disclaimer-title {
+        color: #d4605f;
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: var(--spacing-4);
+      }
+      .disclaimer-text {
+        color: var(--fg-secondary);
+        font-size: 14px;
+        line-height: 1.7;
+        margin-bottom: var(--spacing-6);
+      }
+      .disclaimer-btn {
+        display: block;
+        width: 100%;
+        background: transparent;
+        border: 1px solid var(--accent-primary);
+        color: var(--accent-primary);
+        font-family: inherit;
+        font-size: 14px;
+        padding: var(--spacing-3) var(--spacing-4);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all var(--transition-fast);
+      }
+      .disclaimer-btn:hover {
+        background: var(--accent-gradient);
+        color: white;
+        border-color: transparent;
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+      }
+
+      /* Providers row */
+      .providers {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--spacing-3);
+        margin-bottom: var(--spacing-6);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        padding: var(--spacing-3) var(--spacing-4);
+        background: rgba(139, 117, 255, 0.03);
+        box-shadow: var(--shadow-sm);
+        animation: fadeIn 0.8s ease-out 0.4s both;
+      }
+      .providers-label {
+        color: var(--fg-tertiary);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        flex-shrink: 0;
+      }
+      .provider-logo {
+        width: 20px;
+        height: 20px;
+        opacity: 0.7;
+        transition: all var(--transition-fast);
+        filter: grayscale(30%);
+      }
+      .provider-logo:hover {
+        opacity: 1;
+        filter: grayscale(0%);
+        transform: translateY(-2px) scale(1.1);
+      }
+
+      /* Small screens — allow scroll as fallback */
+      @media (max-height: 620px) {
+        html,
+        body {
+          overflow: auto;
+        }
+      }
+      @media (max-width: 600px) {
+        html,
+        body {
+          overflow: auto;
+        }
+        body {
+          padding: var(--spacing-4) var(--spacing-3) var(--spacing-2);
+        }
+        .ascii {
+          font-size: 7px;
+        }
+        .tagline {
+          font-size: 14px;
+        }
+        .providers {
+          flex-wrap: wrap;
+          gap: var(--spacing-2);
+          padding: var(--spacing-2) var(--spacing-3);
+        }
+        .providers-label {
+          width: 100%;
+        }
+        .how-to-tab-btn {
+          padding: 0.35rem 0.5rem;
+          font-size: 11px;
+        }
+      }
+      @media (max-width: 400px) {
+        .ascii {
+          font-size: 5.5px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!--
+  MONSKILLS — Knowledge Skills for AI Agents
+  https://skills.devnads.com
+
+  Bot-readable. Each skill lives at /<topic>/SKILL.md
+  Fetch any URL and read it into your context.
+
+  All skills:  https://skills.devnads.com/SKILL.md
+-->
+
+    <div class="ascii">
+      ███╗ ███╗ ██████╗ ███╗ ██╗███████╗██╗ ██╗██╗██╗ ██╗ ███████╗ ████╗
+      ████║██╔═══██╗████╗ ██║██╔════╝██║ ██╔╝██║██║ ██║ ██╔════╝ ██╔████╔██║██║
+      ██║██╔██╗ ██║███████╗█████╔╝ ██║██║ ██║ ███████╗ ██║╚██╔╝██║██║
+      ██║██║╚██╗██║╚════██║██╔═██╗ ██║██║ ██║ ╚════██║ ██║ ╚═╝ ██║╚██████╔╝██║
+      ╚████║███████║██║ ██╗██║███████╗███████╗███████║ ╚═╝ ╚═╝ ╚═════╝ ╚═╝
+      ╚═══╝╚══════╝╚═╝ ╚═╝╚═╝╚══════╝╚══════╝╚══════╝
+    </div>
+
+    <p class="tagline">
+      Skills for developing apps on Monad. Assists LLM with frontend, smart
+      contract deployment, and deploying to production.<span
+        class="cursor"
+      ></span>
+    </p>
+
+    <div class="how-to-tabs">
+      <div class="how-to-tab-nav">
+        <button class="how-to-tab-btn active" data-tab="skills">
+          All Agents
+        </button>
+        <button class="how-to-tab-btn" data-tab="agent">Tell your Agent</button>
+      </div>
+      <div class="how-to-tab-panel active" data-tab="skills">
+        <code>npx skills add therealharpaljadeja/monskills</code>
+      </div>
+      <div class="how-to-tab-panel" data-tab="agent">
+        <code
+          >"Read skills.devnads.com and build me an NFT minting app on
+          Monad"</code
+        >
+      </div>
+    </div>
+
+    <div class="providers">
+      <span class="providers-label">Works with</span>
+      <img
+        class="provider-logo"
+        src="logos/cursor.png"
+        alt="Cursor"
+        title="Cursor"
+      />
+      <img
+        class="provider-logo"
+        src="logos/claude.png"
+        alt="Claude Code"
+        title="Claude Code"
+      />
+      <img
+        class="provider-logo"
+        src="logos/openai.png"
+        alt="Codex CLI"
+        title="Codex CLI"
+      />
+      <img
+        class="provider-logo"
+        src="logos/gemini.png"
+        alt="Gemini CLI"
+        title="Gemini CLI"
+      />
+      <img
+        class="provider-logo"
+        src="logos/github.png"
+        alt="VS Code Copilot"
+        title="VS Code Copilot"
+      />
+      <img class="provider-logo" src="logos/kiro.png" alt="Kiro" title="Kiro" />
+      <img
+        class="provider-logo"
+        src="logos/opencode.png"
+        alt="OpenCode"
+        title="OpenCode"
+      />
+    </div>
+
+    <div class="footer">
+      MIT License ·
+      <a href="skill.html?name=scaffold" target="_blank" rel="noopener"
+        >Browse Skills</a
+      >
+      ·
+      <a
+        href="https://github.com/therealharpaljadeja/monskills"
+        target="_blank"
+        rel="noopener"
+        >GitHub</a
+      >
+      ·
+      <a
+        href="https://github.com/therealharpaljadeja/monskills"
+        target="_blank"
+        rel="noopener"
+        >Contribute</a
+      ><br />Anonymous download tracking (no personal data)
+    </div>
+
+    <div id="disclaimer" class="disclaimer-backdrop" aria-hidden="false">
+      <div class="disclaimer-box" role="alertdialog" aria-modal="true">
+        <div class="disclaimer-title">Warning</div>
+        <p class="disclaimer-text">
+          Do not use the code generated by the AI coding assistant in a
+          production environment without completing your own audits and
+          application of best practices.
+        </p>
+        <button type="button" class="disclaimer-btn" id="disclaimer-accept">
+          I understand
+        </button>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+    <script>
+      // ASCII hero animation — CRT flicker-on effect
+      (function () {
+        const ascii = document.querySelector('.ascii');
+        const raw = ascii.textContent;
+        const lines = raw.split('\n').filter((l) => l.length > 0);
+        const maxLen = Math.max(...lines.map((l) => l.length));
+        const padded = lines.map((l) => l.padEnd(maxLen));
+
+        // Wrap each non-space character in a span using safe DOM APIs
+        ascii.textContent = '';
+        for (let row = 0; row < padded.length; row++) {
+          for (let col = 0; col < maxLen; col++) {
+            const ch = padded[row][col] || ' ';
+            if (ch === ' ') {
+              ascii.appendChild(document.createTextNode(' '));
+            } else {
+              const span = document.createElement('span');
+              span.className = 'ch';
+              span.textContent = ch;
+              ascii.appendChild(span);
+            }
+          }
+          if (row < padded.length - 1)
+            ascii.appendChild(document.createTextNode('\n'));
+        }
+
+        const chars = ascii.querySelectorAll('.ch');
+        gsap.set(chars, { autoAlpha: 0 });
+
+        // Random staggered appear — chunks pop in across the art
+        gsap.to(chars, {
+          autoAlpha: 1,
+          duration: 0.05,
+          ease: 'none',
+          stagger: { each: 0.002, from: 'random' },
+          delay: 0.3,
+          onComplete: function () {
+            // Apply gradient-on-text for shine
+            ascii.style.background =
+              'linear-gradient(110deg, #8B75FF 40%, #c4b5ff 50%, #8B75FF 60%)';
+            ascii.style.backgroundSize = '300% 100%';
+            ascii.style.backgroundPosition = '100% 0';
+            ascii.style.webkitBackgroundClip = 'text';
+            ascii.style.backgroundClip = 'text';
+            ascii.style.webkitTextFillColor = 'transparent';
+            ascii.style.color = 'transparent';
+
+            // Looping shine sweep — full pass from right to left
+            gsap.fromTo(
+              ascii,
+              { backgroundPosition: '100% 0' },
+              {
+                backgroundPosition: '0% 0',
+                duration: 2,
+                ease: 'power1.inOut',
+                repeat: -1,
+                repeatDelay: 3,
+              }
+            );
+          },
+        });
+      })();
+
+      // Disclaimer
+      const disclaimer = document.getElementById('disclaimer');
+      const disclaimerAccept = document.getElementById('disclaimer-accept');
+      if (sessionStorage.getItem('disclaimer-accepted')) {
+        disclaimer.classList.add('hidden');
+        disclaimer.setAttribute('aria-hidden', 'true');
+      }
+      disclaimerAccept.addEventListener('click', () => {
+        disclaimer.classList.add('hidden');
+        disclaimer.setAttribute('aria-hidden', 'true');
+        sessionStorage.setItem('disclaimer-accepted', '1');
+      });
+
+      // Tabs
+      document.querySelectorAll('.how-to-tab-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const tab = btn.dataset.tab;
+          document
+            .querySelectorAll('.how-to-tab-btn')
+            .forEach((b) => b.classList.remove('active'));
+          document
+            .querySelectorAll('.how-to-tab-panel')
+            .forEach((p) => p.classList.remove('active'));
+          btn.classList.add('active');
+          document
+            .querySelector('.how-to-tab-panel[data-tab="' + tab + '"]')
+            .classList.add('active');
+        });
+      });
+
+      // Click to copy tab content
+      document.querySelectorAll('.how-to-tab-panel code').forEach((code) => {
+        const orig = code.textContent;
+        let timer;
+        code.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(orig);
+          } catch (err) {
+            const t = document.createElement('textarea');
+            t.value = orig;
+            document.body.appendChild(t);
+            t.select();
+            document.execCommand('copy');
+            document.body.removeChild(t);
+          }
+          clearTimeout(timer);
+          code.textContent = 'Copied!';
+          code.classList.add('copied');
+          code.style.transform = 'translateY(-2px) scale(1.02)';
+          timer = setTimeout(() => {
+            code.textContent = orig;
+            code.classList.remove('copied');
+            code.style.transform = '';
+          }, 1500);
+        });
+      });
+    </script>
+  </body>
+</html>

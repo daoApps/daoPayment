@@ -1,0 +1,17 @@
+{
+  "id": "audit-test",
+  "name": "Audit Test",
+  "description": "Audit test policy",
+  "rules": [
+    {
+      "id": "rule-1",
+      "type": "amount",
+      "operator": "gt",
+      "value": 0,
+      "action": "allow",
+      "priority": 10
+    }
+  ],
+  "createdAt": 1775968939295,
+  "updatedAt": 1775968939295
+}

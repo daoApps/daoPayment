@@ -1,0 +1,25 @@
+{
+  "id": "template-permissive-1775967244170",
+  "name": "Permissive Policy",
+  "description": "Permissive policy with minimal restrictions",
+  "rules": [
+    {
+      "id": "rule-1",
+      "type": "amount",
+      "operator": "gt",
+      "value": 1000,
+      "action": "deny",
+      "priority": 10
+    },
+    {
+      "id": "rule-2",
+      "type": "amount",
+      "operator": "gt",
+      "value": 500,
+      "action": "require_approval",
+      "priority": 9
+    }
+  ],
+  "createdAt": 1775967244170,
+  "updatedAt": 1775967244170
+}

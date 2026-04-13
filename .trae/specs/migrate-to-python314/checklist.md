@@ -1,0 +1,9 @@
+- [x] Python 3.14 环境依赖文件 (`pyproject.toml` 或 `requirements.txt`) 创建完成并包含所需核心库。
+- [x] 核心业务模块（`app/core/`, `app/security/`, `app/audit/`）功能迁移至 Python 并成功通过类型检查和基础单元测试。
+- [x] 区块链合约交互代码（如 `AgenticPaymentPolicy`）通过 `web3.py` 调用成功。
+- [x] MCP Server 已使用 Python 重新实现，且能成功注册原有的所有 Tool 并能被外部客户端发现。
+- [x] FastAPI 后端服务配置完毕，提供所有必须的业务 API，并且自带 OpenAPI/Swagger UI 文档（通过 `/docs` 访问）。
+- [x] CLI 命令行工具已使用 Python 重构完成，通过命令行可执行各项子命令（如 `create-wallet`, `execute-payment` 等）。
+- [x] Next.js 前端应用已成功对接 FastAPI 后端，实现前后端分离或代理转发。
+- [x] 冗余的旧 TypeScript 核心业务代码 (`src/core`, `src/mcp`, `src/cli.ts` 等) 和依赖已彻底从项目中清理。
+- [x] 更新了 `README.md` 的启动指南，反映了最新的前后端架构启动命令。

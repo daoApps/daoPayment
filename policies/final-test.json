@@ -1,0 +1,17 @@
+{
+  "id": "final-test",
+  "name": "Final Test",
+  "description": "Final test policy",
+  "rules": [
+    {
+      "id": "rule-1",
+      "type": "amount",
+      "operator": "gt",
+      "value": 0,
+      "action": "allow",
+      "priority": 10
+    }
+  ],
+  "createdAt": 1775968573103,
+  "updatedAt": 1775968573103
+}

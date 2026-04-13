@@ -1,0 +1,17 @@
+{
+  "id": "perf-test-1775969546122",
+  "name": "Performance Test Policy",
+  "description": "Policy for performance testing",
+  "rules": [
+    {
+      "id": "rule-1",
+      "type": "amount",
+      "operator": "gt",
+      "value": 0,
+      "action": "allow",
+      "priority": 10
+    }
+  ],
+  "createdAt": 1775969546123,
+  "updatedAt": 1775969546123
+}
